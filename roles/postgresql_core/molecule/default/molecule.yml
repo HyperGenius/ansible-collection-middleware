@@ -6,28 +6,14 @@ driver:
   name: docker
 
 platforms:
-  # メインターゲット (Rocky Linux 9)
-  - name: instance-rocky9
-    image: geerlingguy/docker-rockylinux9-ansible:latest
-    privileged: true
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw
-    cgroupns_mode: host
-    command: "/usr/sbin/init"
-    pre_build_image: true
-  # レガシー/安定版ターゲット (Rocky Linux 8)
-  - name: instance-rocky8
-    image: geerlingguy/docker-rockylinux8-ansible:latest
-    privileged: true
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw
-    cgroupns_mode: host
-    command: "/usr/sbin/init"
-    pre_build_image: true
-    environment:
-      # Pythonインタープリタを強制指定しないと、
-      # 最初のFacts収集で /usr/bin/python3 (3.6) を使ってしまいエラーになる
-      ANSIBLE_PYTHON_INTERPRETER: /usr/bin/python3.9
+- name: instance
+  # デフォルトは rockylinux9、環境変数があればそれを使う
+  image: "geerlingguy/docker-${MOLECULE_DISTRO:-rockylinux9}-ansible:latest"
+  privileged: true
+  volumes:
+    - /sys/fs/cgroup:/sys/fs/cgroup:rw
+  cgroupns_mode: host
+  command: "/usr/sbin/init"
 
 provisioner:
   name: ansible

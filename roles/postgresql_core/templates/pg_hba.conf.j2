@@ -1,0 +1,33 @@
+# ------------------------------------------------------------------------------
+# PostgreSQL Client Authentication Configuration File
+# Managed by Ansible (Role: postgresql_core)
+# ------------------------------------------------------------------------------
+
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+# --- 1. Default Rules (Local Access) ---
+# OSのpostgresユーザーはパスワードなし(peer)で接続する
+local   all             postgres                                peer
+
+# --- 2. Custom Rules (From Variables) ---
+# 変数 postgresql_hba_entries のリストを展開
+# 定義されている場合のみ実行
+# formatフィルタを使って左寄せ(桁揃え)
+{% if postgresql_hba_entries is defined %}
+{% for entry in postgresql_hba_entries %}
+{{ "%-7s" | format(entry.type) }} {{ "%-15s" | format(entry.database) }} {{ "%-15s" | format(entry.user) }} {{ "%-23s" | format(entry.address) }} {{ entry.method }}
+{% endfor %}
+{% endif %}
+
+# --- 3. Default Fallback (Safety Net) ---
+# 上記にマッチしなかった場合のデフォルトルール
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            scram-sha-256
+# IPv6 local connections:
+host    all             all             ::1/128                 scram-sha-256
+
+# (Optional)
+# postgresql_allow_subnet 変数が定義されている場合のみ
+# 指定されたサブネットからの接続を許可する
+{% if postgresql_allow_subnet is defined %}
+host    all             all             {{ postgresql_allow_subnet }}    scram-sha-256
+{% endif %}

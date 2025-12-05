@@ -1,0 +1,3 @@
+---
+- name: Install PostgreSQL from repository
+  include_tasks: "el{{ ansible_distribution_major_version }}/01_install.yml"

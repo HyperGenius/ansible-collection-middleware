@@ -1,0 +1,25 @@
+# roles/postgresql_core/tasks/el9/01_install.yml
+---
+# 1. GPG鍵のインポート
+- name: Import PostgreSQL GPG Key
+  ansible.builtin.rpm_key:
+    state: present
+    key: "https://download.postgresql.org/pub/repos/yum/keys/PGDG-RPM-GPG-KEY-RHEL"
+
+# 2. リポジトリRPMのインストール
+- name: Install PostgreSQL repository RPM
+  ansible.builtin.dnf:
+    name: "https://download.postgresql.org/pub/repos/yum/reporpms/EL-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}/pgdg-redhat-repo-latest.noarch.rpm"
+    state: present
+    disable_gpg_check: true
+
+# 3. 標準モジュールの無効化
+- name: Disable default postgresql module (RHEL 8/9)
+  command: dnf -qy module disable postgresql
+  changed_when: false
+  
+# 4. パッケージのインストール
+- name: Install PostgreSQL repository
+  ansible.builtin.dnf:
+    name: postgresql{{ postgresql_version }}-server
+    state: present

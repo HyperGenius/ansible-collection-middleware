@@ -1,0 +1,31 @@
+# ------------------------------------------------------------------------------
+# PostgreSQL Configuration File
+# Managed by Ansible (Role: postgresql_core)
+# ------------------------------------------------------------------------------
+
+# --- 1. Connection Settings (基本接続設定) ---
+listen_addresses = '{{ postgresql_listen_addresses | default("*") }}'
+port = {{ postgresql_port | default(5432) }}
+max_connections = {{ postgresql_max_connections | default(100) }}
+
+# --- 2. Locations & Logging (標準化設定) ---
+log_destination = 'stderr'
+logging_collector = on
+log_directory = 'log'
+log_filename = 'postgresql-%a.log'
+log_truncate_on_rotation = on
+log_rotation_age = 1d
+log_rotation_size = 0
+
+# --- 3. Dynamic Global Parameters (任意の追加設定) ---
+# 変数 postgresql_global_params に辞書型で定義されたものを全て展開します。
+# 例: timezone: "'Asia/Tokyo'"
+{% if postgresql_global_params is defined %}
+{% for key, value in postgresql_global_params.items() %}
+{{ key }} = {{ value }}
+{% endfor %}
+{% endif %}
+
+# --- 4. Extension Mechanism (拡張用ディレクトリ) ---
+# 拡張用ディレクトリにあるファイルの設定を優先するため最後に記載
+include_dir = 'conf.d'

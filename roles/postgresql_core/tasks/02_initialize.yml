@@ -1,0 +1,41 @@
+---
+# データディレクトリにPG_VERSIONファイルが存在するか確認
+- name: Check if data directory is initialized
+  ansible.builtin.stat:
+    path: "{{ postgresql_data_dir }}/PG_VERSION"
+  register: pg_data_version
+
+# PG_VERSIONファイルが存在しない場合セットアップスクリプトで初期化
+- name: Initialize PostgreSQL database
+  ansible.builtin.command: "{{ postgresql_bin_dir }}/postgresql-{{ postgresql_version }}-setup initdb"
+  when: not pg_data_version.stat.exists
+  become: true
+
+# conf.dディレクトリを作成
+- name: Create conf.d directory
+  ansible.builtin.file:
+    path: "{{ postgresql_data_dir }}/conf.d"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: '0750'
+
+# postgresql.confを設定, 設定変更時は再起動ハンドラを呼ぶ
+- name: Configure postgresql.conf to include conf.d
+  ansible.builtin.template:
+    src: postgresql.conf.j2
+    dest: "/var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf"
+    owner: postgres
+    group: postgres
+    mode: '0600'
+  notify: Restart Postgres
+
+# pg_hba.confを設定, 設定変更時は再起動ハンドラを呼ぶ
+- name: Configure pg_hba.conf (Access control)
+  ansible.builtin.template:
+    src: pg_hba.conf.j2
+    dest: "/var/lib/pgsql/{{ postgresql_version }}/data/pg_hba.conf"
+    owner: postgres
+    group: postgres
+    mode: '0600'
+  notify: Restart Postgres

@@ -1,0 +1,9 @@
+---
+- ansible.builtin.import_tasks:
+    file: 01_install.yml
+
+- ansible.builtin.import_tasks:
+    file: 02_initialize.yml
+
+- ansible.builtin.import_tasks:
+    file: 03_service.yml
