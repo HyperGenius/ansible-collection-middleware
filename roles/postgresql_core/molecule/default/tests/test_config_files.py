@@ -1,6 +1,7 @@
-def test_config_files(host):
+def test_config_files(host, postgresql_vars):
     """PostgreSQLの設定ファイルと所有者、権限が正しく設定されていることを確認する"""
-    base_dir = "/var/lib/pgsql/14/data"  # TODO: バージョンを動的に取得する
+    base_dir = postgresql_vars["data_dir"]
+
     conf_file = host.file(f"{base_dir}/postgresql.conf")
     hba_file = host.file(f"{base_dir}/pg_hba.conf")
 

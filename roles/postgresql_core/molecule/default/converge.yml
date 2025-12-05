@@ -3,8 +3,12 @@
   hosts: all
   become: true
   gather_facts: true
-
   tasks:
     - name: "Include core role"
       include_role:
         name: "middleware.middleware.postgresql_core"
+
+    - name: Dump variables
+      include_role:
+        name: "middleware.middleware.postgresql_core"
+        tasks_from: dump_vars_for_test.yml

@@ -1,0 +1,15 @@
+---
+- name: Dump role variables to JSON for Testinfra
+  copy:
+    content: |
+      {{
+        {
+          'version': postgresql_version,
+          'port': postgresql_port,
+          'data_dir': postgresql_data_dir,
+          'service_name': postgresql_service_name,
+          'package_name': postgresql_package_name
+        } | to_nice_json
+      }}
+    dest: /tmp/ansible_vars.json
+    mode: '0644'
