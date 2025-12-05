@@ -1,0 +1,21 @@
+# Ansible Core
+# 環境が古い場合でも開発はサポート期限内のバージョン(2.14+)で行うことを推奨
+ansible-core>=2.15.0
+
+# Testing Framework
+# Molecule本体と、Dockerドライバを含むプラグインセット
+molecule>=6.0.0
+molecule-plugins[docker]>=23.5.0
+
+# Docker Python SDK
+# MoleculeがDockerコンテナを操作するために必要
+docker>=6.1.0
+
+# Linting & Quality
+# 最新すぎるとPython 3.12を要求する場合があるため互換性のあるバージョン範囲を指定
+ansible-lint>=6.17.0,<25.0.0
+yamllint>=1.32.0
+
+# Verification
+# テストコード(Python)を書くためのライブラリ
+pytest-testinfra>=9.0.0

@@ -1,0 +1,7 @@
+---
+authors: HyperGenius
+readme: README.md
+description: RHEL系OSへミドルウェアをインストールするためのAnsible Collection
+namespace: middleware
+name: middleware
+version: 1.0.0
