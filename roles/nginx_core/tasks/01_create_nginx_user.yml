@@ -1,0 +1,18 @@
+---
+# nginxグループを指定されたGIDで作成する
+- name: Ensure nginx group exists with specific GID
+  ansible.builtin.group:
+    name: "{{ nginx_user }}"
+    gid: "{{ nginx_gid | default(nginx_uid) }}"
+    state: present
+
+# nginxユーザーを指定されたUIDで作成する
+- name: Ensure nginx user exists with specific UID
+  ansible.builtin.user:
+    name: "{{ nginx_user }}"
+    uid: "{{ nginx_uid }}"
+    group: "{{ nginx_user }}"
+    shell: /sbin/nologin
+    create_home: false
+    comment: "Nginx web server"
+    state: present

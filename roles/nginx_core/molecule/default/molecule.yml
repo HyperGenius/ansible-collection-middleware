@@ -1,0 +1,28 @@
+---
+dependency:
+  name: galaxy
+
+driver:
+  name: docker
+
+platforms:
+- name: instance
+  # デフォルトは rockylinux9、環境変数があればそれを使う
+  image: "geerlingguy/docker-${MOLECULE_DISTRO:-rockylinux9}-ansible:latest"
+  privileged: true
+  volumes:
+    - /sys/fs/cgroup:/sys/fs/cgroup:rw
+  cgroupns_mode: host
+  command: "/usr/sbin/init"
+
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_FORCE_COLOR: "1"
+  ansible_args:
+    - --diff
+  playbook: prepare.yml
+
+verifier:
+  name: testinfra
+  

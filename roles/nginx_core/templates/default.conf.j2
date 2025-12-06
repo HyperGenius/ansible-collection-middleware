@@ -1,0 +1,28 @@
+# ------------------------------------------------------------------------------
+# Nginx Default Server Configuration
+# Managed by Ansible (Role: nginx_core)
+# ------------------------------------------------------------------------------
+
+server {
+    # 変数で指定されたポートでリッスン
+    listen       {{ nginx_http_port | default(80) }} default_server;
+    listen       [::]:{{ nginx_http_port | default(80) }} default_server;
+    server_name  _;
+
+    # ドキュメントルート (RHEL系の標準パス)
+    root         /usr/share/nginx/html;
+
+    # Load configuration files for the default server block.
+    include /etc/nginx/default.d/*.conf;
+
+    location / {
+    }
+
+    error_page 404 /404.html;
+        location = /40x.html {
+    }
+
+    error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+    }
+}
