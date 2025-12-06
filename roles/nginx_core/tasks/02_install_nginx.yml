@@ -22,12 +22,25 @@
     owner: root
     group: root
     mode: '0644'
-    # 設定ファイルの構文チェック
-    validate: "nginx -t -c %s"
   notify:
     - Reload Nginx
 
-# 4. Nginxサービス起動
+# 4. デフォルトサーバー設定ファイルの配置
+- name: Deploy default server config
+  ansible.builtin.template:
+    src: default.conf.j2
+    dest: "{{ nginx_conf_d_dir }}/default.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Reload Nginx
+
+# 5. Nginx設定ファイルの構文チェック
+- name: Verify Nginx configuration
+  command: nginx -t
+  changed_when: false
+
+# 6. Nginxサービス起動
 - name: Start Nginx service
   ansible.builtin.service:
     name: "{{ nginx_service_name }}"

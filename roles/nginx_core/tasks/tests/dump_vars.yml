@@ -5,6 +5,7 @@
     content: |
       {{
         {
+          'nginx_service_name': nginx_service_name,
           'nginx_package_name': nginx_package_name,
           'nginx_http_port': nginx_http_port,
           'nginx_user': nginx_user,
