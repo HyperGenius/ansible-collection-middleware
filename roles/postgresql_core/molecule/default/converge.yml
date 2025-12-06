@@ -11,4 +11,4 @@
     - name: Dump variables
       include_role:
         name: "middleware.middleware.postgresql_core"
-        tasks_from: dump_vars_for_test.yml
+        tasks_from: tests/dump_vars.yml
