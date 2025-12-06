@@ -6,7 +6,6 @@ PostgreSQL データベースサーバーのインストール、初期化、お
 ## Requirements
 
   * RHEL 8 / 9, AlmaLinux, Rocky Linux
-  * Ansible Collection: `community.general`
 
 ## ⚙️ Role Variables
 
@@ -24,7 +23,8 @@ PostgreSQL データベースサーバーのインストール、初期化、お
 | `postgresql_version` | `"14"` | インストールするPostgreSQLのメジャーバージョン |
 | `postgresql_listen_addresses` | `"*"` | 接続を受け付けるIPアドレス（`*` = 全て） |
 | `postgresql_port` | `5432` | リッスンポート番号 |
-| `postgresql_data_dir` | `/var/lib/pgsql/{{ version }}/data` | データ格納ディレクトリのパス |
+| `postgresql_bin_dir` | `/usr/pgsql-{{ postgresql_version }}/bin` | バイナリ格納ディレクトリのパス |
+| `postgresql_data_dir` | `/var/lib/pgsql/{{ postgresql_version }}/data` | データ格納ディレクトリのパス |
 | `postgresql_max_connections` | `100` | 最大同時接続数（初期値） |
 | `postgresql_global_params` | `{}` | `postgresql.conf` に追記したい任意のパラメータ（辞書形式） |
 
@@ -38,10 +38,9 @@ PostgreSQL データベースサーバーのインストール、初期化、お
 
 | 変数名 | RHEL 8 / 9 設定値 | 説明 |
 | :--- | :--- | :--- |
-| `postgresql_service_name` | `postgresql-{{ version }}` | Systemd サービス名 |
-| `postgresql_package_name` | `postgresql{{ version }}-server` | DNF/YUM パッケージ名 |
-| `postgresql_bin_dir` | `/usr/pgsql-{{ version }}/bin` | バイナリ格納パス |
-| `postgresql_conf_file` | `.../data/postgresql.conf` | 設定ファイルのフルパス |
+| `postgresql_service_name` | `postgresql-{{ postgresql_version }}` | Systemd サービス名 |
+| `postgresql_package_name` | `postgresql{{ postgresql_version }}-server` | DNF/YUM パッケージ名 |
+| `postgresql_conf_file` | `{{ postgresql_data_dir }}/postgresql.conf` | 設定ファイルのフルパス |
 
 ## 🔧 Extension Mechanism (拡張設定)
 
@@ -50,7 +49,7 @@ Ansible 変数 (`postgresql_global_params`) にすべてを詰め込むのでは
 
 ### 設定ファイルの配置ルール
 
-  * **ディレクトリ:** `/var/lib/pgsql/{{ version }}/data/conf.d/`
+  * **ディレクトリ:** `/var/lib/pgsql/{{ postgresql_version }}/data/conf.d/`
   * **ファイル名:** `*.conf` (例: `99-tuning.conf`)
   * **優先順位:** ファイル名の辞書順で読み込まれるため、プレフィックスに数字をつけることを推奨します（例: `00-base.conf` \< `99-override.conf`）。
 
@@ -66,7 +65,7 @@ Core Role を呼び出し、その後にプロジェクト固有の設定ファ�
   
   roles:
     # 1. 基盤設定 (Core Role)
-    - role: my_company.middleware.postgresql_core
+    - role: middleware.middleware.postgresql_core
       vars:
         postgresql_version: "15"
         postgresql_listen_addresses: "*"
