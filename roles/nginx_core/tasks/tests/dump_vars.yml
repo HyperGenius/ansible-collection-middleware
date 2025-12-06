@@ -5,14 +5,17 @@
     content: |
       {{
         {
-          'full_nginx_version': full_nginx_version,
+          'nginx_package_name': nginx_package_name,
           'nginx_http_port': nginx_http_port,
           'nginx_user': nginx_user,
           'nginx_worker_processes': nginx_worker_processes,
           'nginx_server_tokens': nginx_server_tokens,
           'nginx_client_max_body_size': nginx_client_max_body_size,
           'nginx_keepalive_timeout': nginx_keepalive_timeout,
-          'nginx_global_params': nginx_global_params
+          'nginx_global_params': nginx_global_params,
+          'nginx_conf_dir': nginx_conf_dir,
+          'nginx_conf_file': nginx_conf_file,
+          'nginx_conf_d_dir': nginx_conf_d_dir,
         } | to_nice_json
       }}
     dest: /tmp/ansible_vars.json

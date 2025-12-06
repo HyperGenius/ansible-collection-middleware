@@ -1,7 +1,11 @@
 ---
-full_nginx_version: "2:1.20.1-24"
+# 特定バージョンが必要な場合はgroup_varsで上書きしてください
+nginx_package_name: "nginx"
 nginx_http_port: 80
 nginx_user: nginx
+# UID/GIDを固定したい場合のみ定義してください
+# nginx_uid: 990
+# nginx_gid: 990
 nginx_worker_processes: "auto"
 nginx_server_tokens: "off"
 nginx_client_max_body_size: "1m"

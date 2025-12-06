@@ -1,0 +1,35 @@
+---
+# 1. Nginxインストール full_nginx_version で指定されたバージョン
+- name: Install Nginx specified version
+  ansible.builtin.dnf:
+    name: "{{ nginx_package_name }}"
+    state: present
+
+# 2. 設定ディレクトリの確保
+- name: Ensure conf.d directory exists
+  ansible.builtin.file:
+    path: "{{ nginx_conf_d_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+# 3. Nginx設定ファイルの配置
+- name: Copy Nginx configuration file
+  ansible.builtin.template:
+    src: "nginx.conf.j2"
+    dest: "{{ nginx_conf_file }}"
+    owner: root
+    group: root
+    mode: '0644'
+    # 設定ファイルの構文チェック
+    validate: "nginx -t -c %s"
+  notify:
+    - Reload Nginx
+
+# 4. Nginxサービス起動
+- name: Start Nginx service
+  ansible.builtin.service:
+    name: "{{ nginx_service_name }}"
+    state: started
+    enabled: true
