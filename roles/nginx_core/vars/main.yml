@@ -1,0 +1,5 @@
+---
+nginx_service_name: nginx
+nginx_conf_dir: /etc/nginx_conf_file
+nginx_conf_d_dir: /etc/nginx/conf.d
+nginx_conf_file: /etc/nginx/nginx.conf

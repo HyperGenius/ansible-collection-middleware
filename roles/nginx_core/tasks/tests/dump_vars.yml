@@ -1,0 +1,19 @@
+---
+# testinfra用に変数データをJSONファイルに出力
+- name: Dump role variables to JSON for Testinfra
+  ansible.builtin.copy:
+    content: |
+      {{
+        {
+          'full_nginx_version': full_nginx_version,
+          'nginx_http_port': nginx_http_port,
+          'nginx_user': nginx_user,
+          'nginx_worker_processes': nginx_worker_processes,
+          'nginx_server_tokens': nginx_server_tokens,
+          'nginx_client_max_body_size': nginx_client_max_body_size,
+          'nginx_keepalive_timeout': nginx_keepalive_timeout,
+          'nginx_global_params': nginx_global_params
+        } | to_nice_json
+      }}
+    dest: /tmp/ansible_vars.json
+    mode: '0644'

@@ -1,0 +1,24 @@
+---
+# 1. Nginxインストール full_nginx_version で指定されたバージョン
+- name: Install Nginx specified version
+  ansible.builtin.dnf:
+    name: "nginx-{{ full_nginx_version }}.el{{ ansible_distribution_major_version }}"
+    state: present
+
+# 2. Nginxサービス起動
+- name: Start Nginx service
+  ansible.builtin.service:
+    name: "{{ nginx_service_name }}"
+    state: started
+    enabled: true
+
+# 3. Nginx設定ファイルの配置
+- name: Copy Nginx configuration file
+  ansible.builtin.template:
+    src: "nginx.conf.j2"
+    dest: "{{ nginx_conf_file }}"
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - Reload Nginx
