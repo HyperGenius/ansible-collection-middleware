@@ -13,7 +13,7 @@ docker>=6.1.0
 
 # Linting & Quality
 # 最新すぎるとPython 3.12を要求する場合があるため互換性のあるバージョン範囲を指定
-ansible-lint>=6.17.0,<25.0.0
+ansible-lint>=25.12.0
 yamllint>=1.32.0
 
 # Verification

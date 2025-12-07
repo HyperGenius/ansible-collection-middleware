@@ -1,0 +1,14 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Include tomcat_core
+      ansible.builtin.include_role:
+        name: "middleware.middleware.tomcat_core"
+
+    - name: Dump variables
+      ansible.builtin.include_role:
+        name: "middleware.middleware.tomcat_core"
+        tasks_from: tests/dump_vars.yml
