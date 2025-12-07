@@ -1,0 +1,16 @@
+---
+- name: Create Sample Database
+  community.postgresql.postgresql_db:
+    name: "sample_db"
+    state: present
+
+- name: Create Sample Table (users)
+  community.postgresql.postgresql_query:
+    db: "sample_db"
+    query: |
+      CREATE TABLE IF NOT EXISTS users (
+          id SERIAL PRIMARY KEY,
+          username VARCHAR(50) NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    # 📝 備考: 冪等性確保のため CREATE IF NOT EXISTS を使用

@@ -1,0 +1,21 @@
+---
+- name: Converge with Schema (Core Role + Sample Schema Task)
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    # 1. PostgreSQLの基盤を構築する (Core Role)
+    - name: Include Core Role
+      ansible.builtin.include_role:
+        name: "middleware.middleware.postgresql_core"
+
+    # 2. サンプルタスクを実行し、スキーマを適用する (手順書対応)
+    - name: Run Sample Table Creation Task
+      ansible.builtin.include_role:
+        name: "middleware.middleware.postgresql_core"
+        tasks_from: samples/create_table.yml
+
+    - name: Dump variables
+      ansible.builtin.include_role:
+        name: "middleware.middleware.postgresql_core"
+        tasks_from: tests/dump_vars.yml
