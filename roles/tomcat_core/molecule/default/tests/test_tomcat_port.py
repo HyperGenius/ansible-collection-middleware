@@ -1,5 +1,5 @@
-def test_tomcat_port(host):
-    # 【仕様】: ポート 8080 でリッスンしていること (TCP)
-    # Tomcatは起動に時間がかかるため、必要ならリトライ待ちを入れるか、
-    # Ansible側で `wait_for` 済みの状態でテストする
-    pass
+def test_tomcat_port(host, tomcat_vars):
+    """ポート 8080 でリッスンしていること (TCP)"""
+    tomcat_http_port = tomcat_vars["tomcat_http_port"]
+    socket = host.socket(f"tcp://{tomcat_http_port}")
+    assert socket.is_listening

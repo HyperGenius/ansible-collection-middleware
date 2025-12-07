@@ -17,6 +17,7 @@
     name: "{{ tomcat_user }}"
     group: "{{ tomcat_group }}"
     state: present
+    shell: /sbin/nologin
 
 # 3. Tomcatが既にインストールされているかチェック
 - name: Check if Tomcat is already installed

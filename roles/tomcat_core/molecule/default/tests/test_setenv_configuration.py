@@ -1,7 +1,21 @@
-def test_setenv_configuration(host):
-    # 【仕様】: bin/setenv.sh ファイルが存在すること
-    # 【仕様】: プロセス (java) の引数に、デフォルトのヒープ設定などが含まれていること
-    # これにより、setenv.sh が正しく読み込まれているかを検証する
-    # `test_setenv_configuration` でプロセスの引数を見る際、`host.process.get(user="tomcat")` などを使って
-    # Javaプロセスを特定し、その `args` をチェックする
-    pass
+def test_setenv_configuration(host, tomcat_vars):
+    """bin/setenv.sh ファイルが存在すること"""
+    setenv = host.file("/opt/tomcat/bin/setenv.sh")
+    assert setenv.exists
+    assert setenv.is_file
+
+    # --- setenv.sh が正しく読み込まれているか検証 ---
+    # tomcatユーザーで実行されているjavaプロセスを取得
+    tomcat_processes = host.process.filter(user="tomcat", comm="java")
+
+    # プロセスが少なくとも1つ存在すること
+    assert len(tomcat_processes) > 0
+
+    # いずれかのプロセスにヒープ設定が含まれていることを確認
+    found_settings = False
+    for p in tomcat_processes:
+        if "-Xms" in p.args and "-Xmx" in p.args:
+            found_settings = True
+            break
+
+    assert found_settings

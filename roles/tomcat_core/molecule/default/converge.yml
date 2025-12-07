@@ -9,7 +9,6 @@
         name: "middleware.middleware.tomcat_core"
 
     - name: Dump variables
-      copy:
-        content: "{{ hostvars[inventory_hostname] | to_nice_json }}"
-        dest: /tmp/ansible_vars.json
-        mode: '0644'
+      include_role:
+        name: "middleware.middleware.tomcat_core"
+        tasks_from: tests/dump_vars.yml
