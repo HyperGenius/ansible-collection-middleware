@@ -1,0 +1,49 @@
+---
+# 1. server.xmlをテンプレートから設定
+- name: Configure server.xml
+  ansible.builtin.template:
+    src: server.xml.j2
+    dest: "{{ tomcat_conf_dir }}/server.xml"
+    owner: root
+    group: "{{ tomcat_group }}"
+    mode: '0664'
+  notify: Restart Tomcat
+
+# 2. JAVA_HOME のディレクトリを検索
+- name: Find JAVA_HOME directory
+  ansible.builtin.find:
+    paths: "/usr/lib/jvm"
+    patterns: "java-{{ tomcat_java_version }}-openjdk-*"
+    file_type: directory
+    recurse: no
+  register: found_java_dirs
+
+# 3. Javaのパスを変数にセット
+- name: Set JAVA_HOME variable
+  ansible.builtin.set_fact:
+    tomcat_java_home: "{{ found_java_dirs.files[0].path }}"
+  failed_when: found_java_dirs.matched == 0
+
+# 4. tomcat.serviceを登録
+- name: Setup tomcat.service
+  ansible.builtin.template:
+    src: tomcat.service.j2
+    dest: /etc/systemd/system/{{ tomcat_service_name }}.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Tomcat
+
+# 5. Tomcatサービスを起動して有効化
+- name: Ensure Tomcat is started and enabled
+  ansible.builtin.service:
+    name: "{{ tomcat_service_name }}"
+    state: started
+    enabled: true
+
+# 6. Tomcatのポートが開くまで待機
+- name: Wait for Tomcat to start
+  ansible.builtin.wait_for:
+    host: localhost
+    port: "{{ tomcat_http_port }}"
+    timeout: 60

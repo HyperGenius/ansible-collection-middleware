@@ -1,0 +1,18 @@
+---
+# testinfra用に変数データをJSONファイルに出力
+- name: Dump role variables to JSON for Testinfra
+  ansible.builtin.copy:
+    content: |
+      {{
+        {
+          'tomcat_version': tomcat_version,
+          'tomcat_java_version': tomcat_java_version,
+          'tomcat_http_port': tomcat_http_port,
+          'tomcat_shutdown_port': tomcat_shutdown_port,
+          'tomcat_ajp_port': tomcat_ajp_port,
+          'tomcat_user': tomcat_user,
+          'tomcat_group': tomcat_group,
+        } | to_nice_json
+      }}
+    dest: /tmp/ansible_vars.json
+    mode: '0644'

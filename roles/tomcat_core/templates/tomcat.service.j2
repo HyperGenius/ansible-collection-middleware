@@ -1,0 +1,28 @@
+[Unit]
+Description=Apache Tomcat Web Application Container
+After=network.target
+
+[Service]
+Type=forking
+
+# --- 環境変数設定 ---
+Environment="JAVA_HOME={{ tomcat_java_home }}"
+Environment="CATALINA_PID={{ tomcat_install_dir }}/tomcat.pid"
+Environment="CATALINA_HOME={{ tomcat_install_dir }}"
+Environment="CATALINA_BASE={{ tomcat_install_dir }}"
+
+# --- 実行コマンド ---
+ExecStart={{ tomcat_install_dir }}/bin/startup.sh
+ExecStop={{ tomcat_install_dir }}/bin/shutdown.sh
+
+# --- ユーザー/権限設定 ---
+User={{ tomcat_user | default('tomcat') }}
+Group={{ tomcat_group | default('tomcat') }}
+UMask=0007
+
+# --- 再起動設定 ---
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

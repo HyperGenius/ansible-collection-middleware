@@ -1,0 +1,15 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Include tomcat_core
+      include_role:
+        name: "middleware.middleware.tomcat_core"
+
+    - name: Dump variables
+      copy:
+        content: "{{ hostvars[inventory_hostname] | to_nice_json }}"
+        dest: /tmp/ansible_vars.json
+        mode: '0644'
