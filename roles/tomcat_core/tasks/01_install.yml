@@ -2,45 +2,45 @@
 # 1. Javaのインストール
 - name: Install Java
   ansible.builtin.dnf:
-    name: "java-{{ tomcat_java_version }}-openjdk"
+    name: "java-{{ tomcat_core_java_version }}-openjdk"
     state: present
 
 # 2.1 Tomcatグループの作成
 - name: Ensure Tomcat group exists
   ansible.builtin.group:
-    name: "{{ tomcat_group }}"
+    name: "{{ tomcat_core_group }}"
     state: present
 
 # 2.2 Tomcatユーザの作成
 - name: Ensure Tomcat user exists
   ansible.builtin.user:
-    name: "{{ tomcat_user }}"
-    group: "{{ tomcat_group }}"
+    name: "{{ tomcat_core_user }}"
+    group: "{{ tomcat_core_group }}"
     state: present
     shell: /sbin/nologin
 
 # 3. Tomcatが既にインストールされているかチェック
 - name: Check if Tomcat is already installed
-  stat:
-    path: "/opt/apache-tomcat-{{ tomcat_version }}"
-  register: tomcat_dir
+  ansible.builtin.stat:
+    path: "/opt/apache-tomcat-{{ tomcat_core_version }}"
+  register: tomcat_core_dir
 
 # 4. Tomcatが既にインストールされていない場合、ダウンロードして展開
 - name: Download and extract Tomcat
-  unarchive:
-    src: "https://dlcdn.apache.org/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
+  ansible.builtin.unarchive:
+    src: "https://dlcdn.apache.org/tomcat/tomcat-{{ tomcat_core_major_version }}/v{{ tomcat_core_version }}/bin/apache-tomcat-{{ tomcat_core_version }}.tar.gz"
     dest: "/opt"
-    remote_src: yes
-  when: not tomcat_dir.stat.exists
+    remote_src: true
+  when: not tomcat_core_dir.stat.exists
   vars:
-    tomcat_major_version: "{{ tomcat_version.split('.')[0] }}"
+    tomcat_core_major_version: "{{ tomcat_core_version.split('.')[0] }}"
 
 # 5. Tomcatインストール先ディレクトリの所有者と権限設定
 - name: Set ownership of Tomcat directory
   ansible.builtin.file:
-    path: "/opt/apache-tomcat-{{ tomcat_version }}"
-    owner: "{{ tomcat_user }}"
-    group: "{{ tomcat_group }}"
+    path: "/opt/apache-tomcat-{{ tomcat_core_version }}"
+    owner: "{{ tomcat_core_user }}"
+    group: "{{ tomcat_core_group }}"
     state: directory
     recurse: true
     mode: "0755"
@@ -48,6 +48,6 @@
 # 6. Tomcatのシンボリックリンクを設定
 - name: Create symbolic link for Tomcat
   ansible.builtin.file:
-    src: "/opt/apache-tomcat-{{ tomcat_version }}"
-    dest: "{{ tomcat_install_dir }}"
+    src: "/opt/apache-tomcat-{{ tomcat_core_version }}"
+    dest: "{{ tomcat_core_install_dir }}"
     state: link

@@ -1,13 +1,13 @@
 def test_tomcat_user(host, tomcat_vars):
     """tomcat ユーザーが存在すること"""
-    tomcat_user = tomcat_vars["tomcat_user"]
-    tomcat_group = tomcat_vars["tomcat_group"]
+    tomcat_core_user = tomcat_vars["tomcat_core_user"]
+    tomcat_core_group = tomcat_vars["tomcat_core_group"]
 
-    user = host.user(tomcat_user)
+    user = host.user(tomcat_core_user)
     assert user.exists
 
     # tomcat グループが存在すること
-    group = host.group(tomcat_group)
+    group = host.group(tomcat_core_group)
     assert group.exists
     assert user.group == group.name
 

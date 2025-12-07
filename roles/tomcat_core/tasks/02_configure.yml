@@ -3,9 +3,9 @@
 - name: Configure server.xml
   ansible.builtin.template:
     src: server.xml.j2
-    dest: "{{ tomcat_conf_dir }}/server.xml"
+    dest: "{{ tomcat_core_conf_dir }}/server.xml"
     owner: root
-    group: "{{ tomcat_group }}"
+    group: "{{ tomcat_core_group }}"
     mode: '0664'
   notify: Restart Tomcat
 
@@ -13,22 +13,22 @@
 - name: Find JAVA_HOME directory
   ansible.builtin.find:
     paths: "/usr/lib/jvm"
-    patterns: "java-{{ tomcat_java_version }}-openjdk-*"
+    patterns: "java-{{ tomcat_core_java_version }}-openjdk-*"
     file_type: directory
-    recurse: no
-  register: found_java_dirs
+    recurse: false
+  register: tomcat_core_find_java_dirs
 
-# 3. Javaのパスを変数にセット
+# 3. Javaのパスを変数にセット (service登録で使用)
 - name: Set JAVA_HOME variable
   ansible.builtin.set_fact:
-    tomcat_java_home: "{{ found_java_dirs.files[0].path }}"
-  failed_when: found_java_dirs.matched == 0
+    tomcat_core_java_home: "{{ tomcat_core_find_java_dirs.files[0].path }}"
+  failed_when: tomcat_core_find_java_dirs.matched == 0
 
 # 4. tomcat.serviceを登録
 - name: Setup tomcat.service
   ansible.builtin.template:
     src: tomcat.service.j2
-    dest: /etc/systemd/system/{{ tomcat_service_name }}.service
+    dest: /etc/systemd/system/{{ tomcat_core_service_name }}.service
     owner: root
     group: root
     mode: '0644'
@@ -37,7 +37,7 @@
 # 5. Tomcatサービスを起動して有効化
 - name: Ensure Tomcat is started and enabled
   ansible.builtin.service:
-    name: "{{ tomcat_service_name }}"
+    name: "{{ tomcat_core_service_name }}"
     state: started
     enabled: true
 
@@ -45,5 +45,5 @@
 - name: Wait for Tomcat to start
   ansible.builtin.wait_for:
     host: localhost
-    port: "{{ tomcat_http_port }}"
+    port: "{{ tomcat_core_http_port }}"
     timeout: 60

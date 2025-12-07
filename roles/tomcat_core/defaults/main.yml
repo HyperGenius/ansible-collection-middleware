@@ -1,12 +1,12 @@
 ---
-tomcat_version: "10.1.49"
-tomcat_java_version: "11"  # 検索用のバージョン番号 (findモジュールで使用)
-tomcat_http_port: 8080
-tomcat_shutdown_port: 8005
-tomcat_ajp_port: 8009
-tomcat_user: tomcat
-tomcat_group: tomcat
+tomcat_core_version: "10.1.49"
+tomcat_core_java_version: "11"  # 検索用のバージョン番号 (findモジュールで使用)
+tomcat_core_http_port: 8080
+tomcat_core_shutdown_port: 8005
+tomcat_core_ajp_port: 8009
+tomcat_core_user: tomcat
+tomcat_core_group: tomcat
 # setenv.shの設定値
-tomcat_heap_min: "512m"
-tomcat_heap_max: "1024m"
-tomcat_java_opts: "-Djava.awt.headless=true"
+tomcat_core_heap_min: "512m"
+tomcat_core_heap_max: "1024m"
+tomcat_core_java_opts: "-Djava.awt.headless=true"

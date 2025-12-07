@@ -6,18 +6,18 @@ After=network.target
 Type=forking
 
 # --- 環境変数設定 ---
-Environment="JAVA_HOME={{ tomcat_java_home }}"
-Environment="CATALINA_PID={{ tomcat_install_dir }}/tomcat.pid"
-Environment="CATALINA_HOME={{ tomcat_install_dir }}"
-Environment="CATALINA_BASE={{ tomcat_install_dir }}"
+Environment="JAVA_HOME={{ tomcat_core_java_home }}"
+Environment="CATALINA_PID={{ tomcat_core_install_dir }}/tomcat.pid"
+Environment="CATALINA_HOME={{ tomcat_core_install_dir }}"
+Environment="CATALINA_BASE={{ tomcat_core_install_dir }}"
 
 # --- 実行コマンド ---
-ExecStart={{ tomcat_install_dir }}/bin/startup.sh
-ExecStop={{ tomcat_install_dir }}/bin/shutdown.sh
+ExecStart={{ tomcat_core_install_dir }}/bin/startup.sh
+ExecStop={{ tomcat_core_install_dir }}/bin/shutdown.sh
 
 # --- ユーザー/権限設定 ---
-User={{ tomcat_user | default('tomcat') }}
-Group={{ tomcat_group | default('tomcat') }}
+User={{ tomcat_core_user }}
+Group={{ tomcat_core_group }}
 UMask=0007
 
 # --- 再起動設定 ---

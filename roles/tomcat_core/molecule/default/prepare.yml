@@ -7,5 +7,6 @@
   tasks:
     # Rocky 8 の場合のみpython3.9をインストールする
     - name: Install Python 3.9 (Rocky 8)
-      raw: dnf install -y python39
+      ansible.builtin.raw: dnf install -y python39
       when: ansible_distribution_major_version | default('8') == '8'
+      changed_when: false

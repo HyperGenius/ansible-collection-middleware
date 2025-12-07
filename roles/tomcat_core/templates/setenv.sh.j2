@@ -5,16 +5,16 @@
 # ------------------------------------------------------------------------------
 
 # --- 1. Basic Memory Settings (From Ansible Variables) ---
-{% if tomcat_heap_min is defined %}
-CATALINA_OPTS="$CATALINA_OPTS -Xms{{ tomcat_heap_min }}"
+{% if tomcat_core_heap_min is defined %}
+CATALINA_OPTS="$CATALINA_OPTS -Xms{{ tomcat_core_heap_min }}"
 {% endif %}
-{% if tomcat_heap_max is defined %}
-CATALINA_OPTS="$CATALINA_OPTS -Xmx{{ tomcat_heap_max }}"
+{% if tomcat_core_heap_max is defined %}
+CATALINA_OPTS="$CATALINA_OPTS -Xmx{{ tomcat_core_heap_max }}"
 {% endif %}
 
 # --- 2. Global Options ---
-{% if tomcat_java_opts is defined %}
-CATALINA_OPTS="$CATALINA_OPTS {{ tomcat_java_opts }}"
+{% if tomcat_core_java_opts is defined %}
+CATALINA_OPTS="$CATALINA_OPTS {{ tomcat_core_java_opts }}"
 {% endif %}
 
 # --- 3. Extension Mechanism (The "setenv.d" Pattern) ---

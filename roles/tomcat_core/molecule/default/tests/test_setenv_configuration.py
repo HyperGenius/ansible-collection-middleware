@@ -1,6 +1,7 @@
 def test_setenv_configuration(host, tomcat_vars):
     """bin/setenv.sh ファイルが存在すること"""
-    setenv = host.file("/opt/tomcat/bin/setenv.sh")
+    env_dir = tomcat_vars["tomcat_core_install_dir"]
+    setenv = host.file(f"{env_dir}/bin/setenv.sh")
     assert setenv.exists
     assert setenv.is_file
 

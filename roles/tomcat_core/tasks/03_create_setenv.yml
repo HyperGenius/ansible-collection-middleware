@@ -1,17 +1,17 @@
 ---
 - name: Create setenv.d directory
   ansible.builtin.file:
-    path: "{{ tomcat_install_dir }}/bin/setenv.d"
+    path: "{{ tomcat_core_install_dir }}/bin/setenv.d"
     state: directory
-    owner: "{{ tomcat_user }}"
-    group: "{{ tomcat_group }}"
+    owner: "{{ tomcat_core_user }}"
+    group: "{{ tomcat_core_group }}"
     mode: '0750'
 
 - name: Configure setenv.sh
   ansible.builtin.template:
     src: setenv.sh.j2
-    dest: "{{ tomcat_install_dir }}/bin/setenv.sh"
-    owner: "{{ tomcat_user }}"
-    group: "{{ tomcat_group }}"
+    dest: "{{ tomcat_core_install_dir }}/bin/setenv.sh"
+    owner: "{{ tomcat_core_user }}"
+    group: "{{ tomcat_core_group }}"
     mode: '0750'
   notify: Restart Tomcat

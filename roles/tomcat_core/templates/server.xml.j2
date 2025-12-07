@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Server port="{{ tomcat_shutdown_port }}" shutdown="SHUTDOWN">
+<Server port="{{ tomcat_core_shutdown_port }}" shutdown="SHUTDOWN">
   <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
   <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
   <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
@@ -15,10 +15,10 @@
   </GlobalNamingResources>
 
   <Service name="Catalina">
-    <Connector port="{{ tomcat_http_port }}" protocol="HTTP/1.1"
+    <Connector port="{{ tomcat_core_http_port }}" protocol="HTTP/1.1"
                connectionTimeout="20000"
                redirectPort="8443" />
-    <Connector port="{{ tomcat_ajp_port }}" protocol="AJP/1.3" redirectPort="8443" />
+    <Connector port="{{ tomcat_core_ajp_port }}" protocol="AJP/1.3" redirectPort="8443" />
 
     <Engine name="Catalina" defaultHost="localhost">
       <Realm className="org.apache.catalina.realm.LockOutRealm">

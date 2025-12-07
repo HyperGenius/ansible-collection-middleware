@@ -1,4 +1,4 @@
-def test_java_installation(host, tomcat_vars):
+def test_java_installation(host):
     """Java (OpenJDK) パッケージがインストールされていること"""
     cmd_pkg = host.run("rpm -qa | grep java-.*-openjdk")
     assert cmd_pkg.rc == 0

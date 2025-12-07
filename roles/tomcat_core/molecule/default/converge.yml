@@ -5,10 +5,10 @@
   gather_facts: true
   tasks:
     - name: Include tomcat_core
-      include_role:
+      ansible.builtin.include_role:
         name: "middleware.middleware.tomcat_core"
 
     - name: Dump variables
-      include_role:
+      ansible.builtin.include_role:
         name: "middleware.middleware.tomcat_core"
         tasks_from: tests/dump_vars.yml
