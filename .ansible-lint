@@ -1,0 +1,9 @@
+# .ansible-lint
+
+exclude_paths:
+  - ".ansible/tmp"
+  - ".ansible/roles"
+  - ".ansible/collections"
+  - ".cache"
+  - "**/__pycache__"
+  - ".vagrant"

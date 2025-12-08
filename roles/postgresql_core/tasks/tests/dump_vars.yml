@@ -1,7 +1,7 @@
 ---
 # testinfra用に変数データをJSONファイルに出力
 - name: Dump role variables to JSON for Testinfra
-  copy:
+  ansible.builtin.copy:
     content: |
       {{
         {

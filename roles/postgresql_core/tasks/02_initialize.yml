@@ -9,6 +9,7 @@
 - name: Initialize PostgreSQL database
   ansible.builtin.command: "{{ postgresql_core_bin_dir }}/postgresql-{{ postgresql_core_version }}-setup initdb"
   when: not pg_data_version.stat.exists
+  changed_when: false
   become: true
 
 # conf.dディレクトリを作成
