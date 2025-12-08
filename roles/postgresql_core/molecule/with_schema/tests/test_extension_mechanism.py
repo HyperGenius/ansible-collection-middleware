@@ -1,7 +1,5 @@
 def test_extension_mechanism(host, postgresql_vars):
-    """PostgreSQLの拡張ディレクトリパターンが機能していることを確認する
-    これがないと拡張ディレクトリパターンが機能しないため、最重要チェック項目
-    """
+    """PostgreSQLの拡張ディレクトリパターンが機能していることを確認する"""
     base_dir = postgresql_vars["data_dir"]
     conf_d = host.file(f"{base_dir}/conf.d")
 

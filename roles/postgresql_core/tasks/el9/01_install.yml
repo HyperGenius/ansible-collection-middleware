@@ -21,5 +21,5 @@
 # 4. パッケージのインストール
 - name: Install PostgreSQL repository
   ansible.builtin.dnf:
-    name: postgresql{{ postgresql_version }}-server
+    name: postgresql{{ postgresql_core_version }}-server
     state: present

@@ -1,4 +1,4 @@
 ---
-postgresql_service_name: "postgresql-{{ postgresql_version }}"
-postgresql_package_name: "postgresql{{ postgresql_version }}-server"
-postgresql_conf_file: "{{ postgresql_data_dir }}/postgresql.conf"
+postgresql_core_service_name: "postgresql-{{ postgresql_core_version }}"
+postgresql_core_package_name: "postgresql{{ postgresql_core_version }}-server"
+postgresql_core_conf_file: "{{ postgresql_core_data_dir }}/postgresql.conf"
