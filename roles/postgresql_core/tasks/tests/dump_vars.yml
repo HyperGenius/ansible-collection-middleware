@@ -1,15 +1,17 @@
 ---
 # testinfra用に変数データをJSONファイルに出力
 - name: Dump role variables to JSON for Testinfra
-  copy:
+  ansible.builtin.copy:
     content: |
       {{
         {
-          'version': postgresql_version,
-          'port': postgresql_port,
-          'data_dir': postgresql_data_dir,
-          'service_name': postgresql_service_name,
-          'package_name': postgresql_package_name
+          'version': postgresql_core_version,
+          'port': postgresql_core_port,
+          'data_dir': postgresql_core_data_dir,
+          'service_name': postgresql_core_service_name,
+          'package_name': postgresql_core_package_name,
+          'user': postgresql_core_user,
+          'group': postgresql_core_group
         } | to_nice_json
       }}
     dest: /tmp/ansible_vars.json

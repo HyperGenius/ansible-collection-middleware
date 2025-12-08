@@ -6,3 +6,6 @@ venv/
 
 # Ansible cache files
 .ansible
+
+# Ansible collection build artifacts
+*.tar.gz

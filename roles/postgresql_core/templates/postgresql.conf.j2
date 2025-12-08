@@ -4,9 +4,9 @@
 # ------------------------------------------------------------------------------
 
 # --- 1. Connection Settings (基本接続設定) ---
-listen_addresses = '{{ postgresql_listen_addresses | default("*") }}'
-port = {{ postgresql_port | default(5432) }}
-max_connections = {{ postgresql_max_connections | default(100) }}
+listen_addresses = '{{ postgresql_core_listen_addresses | default("*") }}'
+port = {{ postgresql_core_port | default(5432) }}
+max_connections = {{ postgresql_core_max_connections | default(100) }}
 
 # --- 2. Locations & Logging (標準化設定) ---
 log_destination = 'stderr'
@@ -18,10 +18,10 @@ log_rotation_age = 1d
 log_rotation_size = 0
 
 # --- 3. Dynamic Global Parameters (任意の追加設定) ---
-# 変数 postgresql_global_params に辞書型で定義されたものを全て展開します。
+# 変数 postgresql_core_global_params に辞書型で定義されたものを全て展開します。
 # 例: timezone: "'Asia/Tokyo'"
-{% if postgresql_global_params is defined %}
-{% for key, value in postgresql_global_params.items() %}
+{% if postgresql_core_global_params is defined %}
+{% for key, value in postgresql_core_global_params.items() %}
 {{ key }} = {{ value }}
 {% endfor %}
 {% endif %}

@@ -1,3 +1,17 @@
 ---
+# 1. postgreグループを作成
+- name: Ensure postgres group exists
+  ansible.builtin.group:
+    name: "{{ postgresql_core_group }}"
+    state: present
+
+# 2. postgreユーザを作成
+- name: Ensure postgres user exists
+  ansible.builtin.user:
+    name: "{{ postgresql_core_user }}"
+    group: "{{ postgresql_core_group }}"
+    state: present
+
+# 3. PostgreSQLをインストール
 - name: Install PostgreSQL from repository
-  include_tasks: "el{{ ansible_distribution_major_version }}/01_install.yml"
+  ansible.builtin.include_tasks: "el{{ ansible_distribution_major_version }}/01_install.yml"

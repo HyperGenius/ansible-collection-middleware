@@ -5,10 +5,10 @@
   gather_facts: true
   tasks:
     - name: "Include core role"
-      include_role:
+      ansible.builtin.include_role:
         name: "middleware.middleware.postgresql_core"
 
     - name: Dump variables
-      include_role:
+      ansible.builtin.include_role:
         name: "middleware.middleware.postgresql_core"
         tasks_from: tests/dump_vars.yml
