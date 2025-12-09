@@ -16,6 +16,8 @@
   changed_when: false
   failed_when: false
   environment:
+    # Note: PGPASSWORD is used here for simplicity in testing
+    # For production, consider using .pgpass file or connection service file
     PGPASSWORD: "{{ zabbix_server_core_db_password | default('') }}"
 
 # Import database schema only if tables don't exist
@@ -30,6 +32,8 @@
     executable: /bin/bash
   when: zabbix_server_core_table_check.stdout | default('0') == '0'
   environment:
+    # Note: PGPASSWORD is used here for simplicity in testing
+    # For production, consider using .pgpass file or connection service file
     PGPASSWORD: "{{ zabbix_server_core_db_password | default('') }}"
   register: zabbix_server_core_schema_import
   changed_when: zabbix_server_core_schema_import.rc == 0
