@@ -1,0 +1,59 @@
+---
+- name: Prepare
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    # Install PostgreSQL first
+    - name: Install PostgreSQL using postgresql_core role
+      ansible.builtin.include_role:
+        name: "middleware.middleware.postgresql_core"
+      vars:
+        postgresql_core_version: "14"
+
+    # Wait for PostgreSQL to be ready
+    - name: Wait for PostgreSQL to be ready
+      ansible.builtin.wait_for:
+        port: 5432
+        delay: 5
+        timeout: 60
+
+    # Install Python PostgreSQL library for ansible modules
+    - name: Install Python PostgreSQL library
+      ansible.builtin.dnf:
+        name:
+          - python3-psycopg2
+        state: present
+
+    # Create Zabbix database
+    - name: Create Zabbix database
+      community.postgresql.postgresql_db:
+        name: zabbix
+        encoding: UTF-8
+        lc_collate: en_US.UTF-8
+        lc_ctype: en_US.UTF-8
+        template: template0
+      become: true
+      become_user: postgres
+
+    # Create Zabbix database user
+    - name: Create Zabbix database user
+      community.postgresql.postgresql_user:
+        db: zabbix
+        name: zabbix
+        password: zabbix_test_password
+        priv: ALL
+      become: true
+      become_user: postgres
+
+    # Grant schema permissions
+    - name: Grant schema permissions to zabbix user
+      community.postgresql.postgresql_privs:
+        database: zabbix
+        state: present
+        privs: ALL
+        type: schema
+        objs: public
+        role: zabbix
+      become: true
+      become_user: postgres

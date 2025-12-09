@@ -1,0 +1,8 @@
+---
+zabbix_server_core_version: "6.0"
+zabbix_server_core_db_host: "localhost"
+zabbix_server_core_db_name: "zabbix"
+zabbix_server_core_db_user: "zabbix"
+# Note: zabbix_server_core_db_password is NOT defined here for security
+# It should be provided by the project or in molecule tests
+zabbix_server_core_listen_port: 10051

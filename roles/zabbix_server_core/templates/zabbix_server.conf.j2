@@ -1,0 +1,25 @@
+# ------------------------------------------------------------------------------
+# Zabbix Server Configuration File
+# Managed by Ansible (Role: zabbix_server_core)
+# ------------------------------------------------------------------------------
+
+# --- Database Connection Settings ---
+DBHost={{ zabbix_server_core_db_host }}
+DBName={{ zabbix_server_core_db_name }}
+DBUser={{ zabbix_server_core_db_user }}
+
+# Note: DBPassword is NOT set here for security reasons
+# Please create a file in {{ zabbix_server_core_conf_dir }}/ with:
+# DBPassword=your_password_here
+
+# --- Network Settings ---
+ListenPort={{ zabbix_server_core_listen_port }}
+
+# --- Logging Settings ---
+LogFile={{ zabbix_server_core_log_file }}
+LogFileSize=0
+
+# --- Extension Mechanism ---
+# Load additional configuration from conf.d directory
+# This allows projects to inject sensitive data like DBPassword
+Include={{ zabbix_server_core_conf_dir }}/*.conf

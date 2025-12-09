@@ -1,0 +1,16 @@
+---
+- name: Import install tasks
+  ansible.builtin.import_tasks:
+    file: 01_install.yml
+
+- name: Import database schema tasks
+  ansible.builtin.import_tasks:
+    file: 02_db_schema.yml
+
+- name: Import configure tasks
+  ansible.builtin.import_tasks:
+    file: 03_configure.yml
+
+- name: Import service tasks
+  ansible.builtin.import_tasks:
+    file: 04_service.yml

@@ -1,0 +1,19 @@
+---
+# Create conf.d directory for extension mechanism
+- name: Create zabbix_server.conf.d directory
+  ansible.builtin.file:
+    path: "{{ zabbix_server_core_conf_dir }}"
+    state: directory
+    owner: zabbix
+    group: zabbix
+    mode: '0750'
+
+# Deploy main configuration file
+- name: Configure zabbix_server.conf
+  ansible.builtin.template:
+    src: zabbix_server.conf.j2
+    dest: "{{ zabbix_server_core_conf_file }}"
+    owner: zabbix
+    group: zabbix
+    mode: '0640'
+  notify: Restart Zabbix Server

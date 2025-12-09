@@ -1,0 +1,24 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    # Create password configuration file for Zabbix
+    - name: Create DBPassword configuration file
+      ansible.builtin.copy:
+        content: |
+          # Database password for Zabbix Server
+          DBPassword=zabbix_test_password
+        dest: /etc/zabbix/zabbix_server.conf.d/dbpassword.conf
+        owner: zabbix
+        group: zabbix
+        mode: '0640'
+
+    # Include the zabbix_server_core role
+    - name: "Include zabbix_server_core role"
+      ansible.builtin.include_role:
+        name: "middleware.middleware.zabbix_server_core"
+      vars:
+        zabbix_server_core_version: "6.0"
+        zabbix_server_core_db_password: "zabbix_test_password"
