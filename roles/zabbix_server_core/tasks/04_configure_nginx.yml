@@ -1,0 +1,23 @@
+---
+# 1. ポートを 8080 -> 80 に変更しつつコメントアウトを外す
+- name: Configure Zabbix Nginx listen port
+  ansible.builtin.replace:
+    path: /etc/nginx/conf.d/zabbix.conf
+    regexp: '^\s*#?\s*listen\s+8080;'
+    replace: '    listen {{ zabbix_server_core_web_port | default(80) }};'
+  notify: Restart nginx
+
+# 2. server_name を設定 (example.com -> _)
+- name: Configure Zabbix Nginx server_name
+  ansible.builtin.replace:
+    path: /etc/nginx/conf.d/zabbix.conf
+    regexp: '^\s*#?\s*server_name\s+example.com;'
+    replace: '    server_name _;'
+  notify: Restart nginx
+
+# 3. nginx_core の default.confを削除 (ポート競合の抑止)
+- name: Remove default Nginx config to avoid port conflict
+  ansible.builtin.file:
+    path: /etc/nginx/conf.d/default.conf
+    state: absent
+  notify: Restart nginx

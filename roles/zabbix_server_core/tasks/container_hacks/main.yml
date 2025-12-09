@@ -1,0 +1,61 @@
+---
+- name: Disable PHP-FPM ACL settings for container
+  ansible.builtin.replace:
+    path: /etc/php-fpm.d/www.conf
+    regexp: '^(listen\.acl_)'
+    replace: ';\1'
+  notify: Restart PHP-FPM
+
+# 1. PHP-FPMの設定ファイルをリストアップ
+- name: Find all PHP-FPM config files
+  ansible.builtin.find:
+    paths: /etc/php-fpm.d
+    patterns: "*.conf"
+  register: php_fpm_configs
+
+# 2. 見つかった全ファイルで ACL 設定を無効化 (コメントアウト)
+- name: Disable PHP-FPM ACL settings for container
+  ansible.builtin.replace:
+    path: "{{ item.path }}"
+    regexp: '^(listen\.acl_)'
+    replace: ';\1'
+  loop: "{{ php_fpm_configs.files }}"
+  notify: Restart PHP-FPM
+
+# 3. Zabbix用ソケットの所有権設定を追加 (ACLを無効化した代わり)
+# zabbix.conf 内の設定も修正して、nginxユーザーがアクセスできるようにします
+- name: Configure PHP-FPM (zabbix pool) socket ownership
+  ansible.builtin.lineinfile:
+    path: /etc/php-fpm.d/zabbix.conf
+    regexp: '^;?listen\.{{ item.key }}\s*='
+    line: "listen.{{ item.key }} = {{ item.value }}"
+  loop:
+    - { key: 'owner', value: 'nginx' }
+    - { key: 'group', value: 'nginx' }
+    - { key: 'mode',  value: '0660' }
+  notify: Restart PHP-FPM
+
+- name: Ensure PID directory exists manually
+  ansible.builtin.file:
+    path: /run/zabbix
+    state: directory
+    owner: zabbix
+    group: zabbix
+    mode: '0755'
+
+- name: Create systemd override for Foreground mode
+  ansible.builtin.file:
+    path: /etc/systemd/system/zabbix-server.service.d
+    state: directory
+    mode: '0755'
+
+- name: Override Zabbix to run in foreground
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/zabbix-server.service.d/override.conf
+    content: |
+      [Service]
+      Type=simple
+      PIDFile=
+      ExecStart=
+      ExecStart=/usr/sbin/zabbix_server -c /etc/zabbix/zabbix_server.conf -f
+  notify: Restart Zabbix Server

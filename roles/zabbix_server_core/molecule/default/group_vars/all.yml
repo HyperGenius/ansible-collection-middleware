@@ -1,0 +1,6 @@
+---
+zabbix_server_core_db_name: "zabbix"
+zabbix_server_core_db_user: "zabbix"
+zabbix_server_core_db_password: "password_for_test"
+# テストはコンテナ環境で実施
+is_container_env: true

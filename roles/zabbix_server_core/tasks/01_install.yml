@@ -1,15 +1,36 @@
 ---
-# Install Zabbix Server package
+# 1. Zabbixリポジトリの追加
 - name: Install Zabbix Release RPM
   ansible.builtin.dnf:
-    name: >-
-      https://repo.zabbix.com/zabbix/{{ zabbix_server_core_version }}/rhel/{{
-      ansible_distribution_major_version }}/{{ ansible_architecture }}/zabbix-release-{{
-      zabbix_server_core_version }}-4.el{{ ansible_distribution_major_version }}.noarch.rpm
+    name: "{{ zabbix_server_core_repo_rpm_url }}"
     state: present
     disable_gpg_check: true
 
-- name: Install Zabbix Server PostgreSQL package
+# 2. EPELリポジトリの設定, デフォルトを無効にする
+- name: Configure EPEL repository (Disable by default)
+  ansible.builtin.replace:
+    path: /etc/yum.repos.d/epel.repo
+    regexp: '^enabled=1'
+    replace: 'enabled=0'
+
+# 3. Zabbix Server packageのインストール
+- name: Install Zabbix Release RPM
   ansible.builtin.dnf:
-    name: "{{ zabbix_server_core_package_name }}"
+    name: 
+      - zabbix-server-pgsql
+      - zabbix-web-pgsql
+      - zabbix-nginx-conf
+      - zabbix-sql-scripts
+      - zabbix-selinux-policy
+      - zabbix-agent2
     state: present
+    disable_gpg_check: true
+
+# 4. 言語パックのインストール
+- name: Install required language packs for Zabbix Web
+  ansible.builtin.dnf:
+    name:
+      - glibc-langpack-en
+      - glibc-langpack-ja
+    state: present
+  notify: Restart PHP-FPM

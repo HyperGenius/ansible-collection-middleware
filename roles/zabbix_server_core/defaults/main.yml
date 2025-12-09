@@ -1,8 +1,14 @@
 ---
-zabbix_server_core_version: "6.0"
+zabbix_server_core_major_version: "7.4"
+zabbix_server_core_target_version: "7.4.5"
+zabbix_server_core_repo_rpm_url: "https://repo.zabbix.com/zabbix/{{ zabbix_server_core_major_version }}/release/rhel/{{ ansible_distribution_major_version }}/noarch/zabbix-release-latest-{{ zabbix_server_core_major_version }}.el{{ ansible_distribution_major_version }}.noarch.rpm"
+zabbix_server_core_release: "1"
+
+# DB接続設定
 zabbix_server_core_db_host: "localhost"
 zabbix_server_core_db_name: "zabbix"
 zabbix_server_core_db_user: "zabbix"
-# Note: zabbix_server_core_db_password is NOT defined here for security
-# It should be provided by the project or in molecule tests
+
+# Note: zabbix_server_core_db_password はここでは定義しません
+# 利用先のプロジェクトやmolecule testsで実装してください
 zabbix_server_core_listen_port: 10051

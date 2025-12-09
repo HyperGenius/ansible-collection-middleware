@@ -4,11 +4,6 @@
   become: true
   gather_facts: true
   tasks:
-    # Include the zabbix_server_core role
-    # The password is passed as a variable for both DB schema import and config
-    - name: "Include zabbix_server_core role"
+    - name: Include zabbix_server_core role
       ansible.builtin.include_role:
         name: "middleware.middleware.zabbix_server_core"
-      vars:
-        zabbix_server_core_version: "6.0"
-        zabbix_server_core_db_password: "zabbix_test_password"

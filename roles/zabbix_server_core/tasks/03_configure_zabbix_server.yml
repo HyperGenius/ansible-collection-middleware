@@ -1,5 +1,5 @@
 ---
-# Create conf.d directory for extension mechanism
+# 1. zabbix_server.conf.dディレクトリの作成
 - name: Create zabbix_server.conf.d directory
   ansible.builtin.file:
     path: "{{ zabbix_server_core_conf_dir }}"
@@ -8,7 +8,7 @@
     group: zabbix
     mode: '0750'
 
-# Deploy main configuration file
+# 2. zabbix_server.confをtemplatesからコピー
 - name: Configure zabbix_server.conf
   ansible.builtin.template:
     src: zabbix_server.conf.j2
@@ -18,8 +18,8 @@
     mode: '0640'
   notify: Restart Zabbix Server
 
-# Optionally create password file in conf.d if password is provided
-# This is mainly for testing; in production, the project should manage this file
+# 3. DBPasswordファイルをconf.dにコピー (テスト用)
+# 本番環境ではプロジェクトがこのファイルを管理する必要があります。
 - name: Create DBPassword configuration file (when password is provided)
   ansible.builtin.copy:
     content: |

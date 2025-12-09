@@ -1,39 +1,57 @@
 ---
-# Install SQL scripts package
-- name: Install Zabbix SQL scripts package
-  ansible.builtin.dnf:
-    name: "{{ zabbix_server_core_sql_scripts_package }}"
-    state: present
+# 1. zabbix-sql-scriptsの場所を探す
+- name: Find all server.sql.gz files
+  ansible.builtin.find:
+    paths:
+      - /usr/share/zabbix-sql-scripts
+      - /usr/share/zabbix
+      - /usr/share/doc
+    patterns: "server.sql.gz"
+    recurse: yes
+    file_type: file
+  register: all_schema_files
 
-# Check if database has already been initialized
-- name: Check if Zabbix tables exist in database
-  ansible.builtin.command: >
-    psql -h {{ zabbix_server_core_db_host }}
-         -U {{ zabbix_server_core_db_user }}
-         -d {{ zabbix_server_core_db_name }}
-         -tAc "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users'"
-  register: zabbix_server_core_table_check
-  changed_when: false
-  failed_when: false
-  environment:
-    # Note: PGPASSWORD is used here for simplicity in testing
-    # For production, consider using .pgpass file or connection service file
-    PGPASSWORD: "{{ zabbix_server_core_db_password | default('') }}"
+# 2. パスに "postgresql" が含まれるものだけを抽出 (MySQL用を除外)
+- name: Select PostgreSQL schema file
+  ansible.builtin.set_fact:
+    zabbix_server_core_schema_file: >-
+      {{
+        all_schema_files.files
+        | selectattr('path', 'search', '/postgresql/')
+        | map(attribute='path')
+        | first
+        | default('')
+      }}
 
-# Import database schema only if tables don't exist
-- name: Import Zabbix database schema
-  ansible.builtin.shell:
-    cmd: |
-      set -o pipefail
-      zcat /usr/share/zabbix-sql-scripts/postgresql/server.sql.gz |
+# 3. ファイルが見つからなかった時はエラー
+- name: Fail if schema file not found
+  ansible.builtin.fail:
+    msg: "Could not find server.sql.gz for PostgreSQL in /usr/share"
+  when: zabbix_server_core_schema_file == ''
+
+# 4. 初期化済みかチェック (冪等性の担保)
+- name: Check if Zabbix database is already initialized
+  ansible.builtin.command:
+    cmd: >-
       psql -h {{ zabbix_server_core_db_host }}
-           -U {{ zabbix_server_core_db_user }}
-           -d {{ zabbix_server_core_db_name }}
-    executable: /bin/bash
-  when: zabbix_server_core_table_check.stdout | default('0') == '0'
+      -U {{ zabbix_server_core_db_user }}
+      -d {{ zabbix_server_core_db_name }}
+      -c "SELECT count(*) FROM users;"
   environment:
-    # Note: PGPASSWORD is used here for simplicity in testing
-    # For production, consider using .pgpass file or connection service file
-    PGPASSWORD: "{{ zabbix_server_core_db_password | default('') }}"
-  register: zabbix_server_core_schema_import
-  changed_when: zabbix_server_core_schema_import.rc == 0
+    PGPASSWORD: "{{ zabbix_server_core_db_password }}"
+  register: zabbix_server_core_schema_check
+  ignore_errors: true
+  # コマンドの失敗(rc=1)を成功扱いとするため記載
+  failed_when: false
+  changed_when: false
+
+# 5. スキーマのインポート, テーブルが存在しない場合のみ実行
+- name: Import Zabbix initial schema
+  ansible.builtin.shell: >-
+    zcat "{{ zabbix_server_core_schema_file }}"
+    | psql -h {{ zabbix_server_core_db_host }}
+    -U {{ zabbix_server_core_db_user }}
+    -d {{ zabbix_server_core_db_name }}
+  environment:
+    PGPASSWORD: "{{ zabbix_server_core_db_password }}"
+  when: zabbix_server_core_schema_check.rc != 0

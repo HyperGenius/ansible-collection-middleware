@@ -9,8 +9,17 @@
 
 - name: Import configure tasks
   ansible.builtin.import_tasks:
-    file: 03_configure.yml
+    file: 03_configure_zabbix_server.yml
+
+- name: Import configure nginx tasks
+  ansible.builtin.import_tasks:
+    file: 04_configure_nginx.yml
+
+- name: Import container hacks tasks
+  ansible.builtin.import_tasks:
+    file: container_hacks/main.yml
+  when: is_container_env | default(false) | bool
 
 - name: Import service tasks
   ansible.builtin.import_tasks:
-    file: 04_service.yml
+    file: 05_service.yml

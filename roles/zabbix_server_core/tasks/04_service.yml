@@ -1,6 +1,0 @@
----
-- name: Start and enable Zabbix Server service
-  ansible.builtin.service:
-    name: "{{ zabbix_server_core_service_name }}"
-    state: started
-    enabled: true

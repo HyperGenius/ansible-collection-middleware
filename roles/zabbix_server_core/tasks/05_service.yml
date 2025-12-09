@@ -1,0 +1,28 @@
+---
+# PHP-FPM (Nginxの前に起動必須)
+- name: Start and enable PHP-FPM
+  ansible.builtin.service:
+    name: php-fpm
+    state: started
+    enabled: true
+
+# Nginxサービスの起動と有効化
+- name: Start and enable Nginx service
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+
+# 3. Zabbix Agentサービスの起動と有効化
+- name: Start and enable Zabbix Agent service
+  ansible.builtin.service:
+    name: zabbix-agent2
+    state: started
+    enabled: true
+
+# 2. Zabbix Serverサービスの起動と有効化
+- name: Start and enable Zabbix Server service
+  ansible.builtin.service:
+    name: "{{ zabbix_server_core_service_name }}"
+    state: started
+    enabled: true

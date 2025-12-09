@@ -4,56 +4,51 @@
   become: true
   gather_facts: true
   tasks:
-    # Install PostgreSQL first
+    # 1. PostgreSQLのインストール
     - name: Install PostgreSQL using postgresql_core role
       ansible.builtin.include_role:
         name: "middleware.middleware.postgresql_core"
       vars:
-        postgresql_core_version: "14"
+        postgresql_core_version: 14
 
-    # Wait for PostgreSQL to be ready
+    # 2. PostgreSQLが起動するまで待機
     - name: Wait for PostgreSQL to be ready
       ansible.builtin.wait_for:
         port: 5432
         delay: 5
         timeout: 60
 
-    # Install Python PostgreSQL library for ansible modules
+    # 3. Python PostgreSQLライブラリのインストール
     - name: Install Python PostgreSQL library
-      ansible.builtin.dnf:
-        name:
-          - python3-psycopg2
-        state: present
+      ansible.builtin.pip:
+        name: psycopg2-binary
+        executable: pip3
 
-    # Create Zabbix database
+    # 4. Zabbixデータベースの作成
     - name: Create Zabbix database
       community.postgresql.postgresql_db:
-        name: zabbix
-        encoding: UTF-8
-        lc_collate: en_US.UTF-8
-        lc_ctype: en_US.UTF-8
-        template: template0
+        name: "{{ zabbix_server_core_db_name }}"
+        state: present
       become: true
       become_user: postgres
 
-    # Create Zabbix database user
+    # 5. Zabbixデータベースユーザーの作成
     - name: Create Zabbix database user
       community.postgresql.postgresql_user:
-        db: zabbix
-        name: zabbix
-        password: zabbix_test_password
-        priv: ALL
+        db: "{{ zabbix_server_core_db_name }}"
+        name: "{{ zabbix_server_core_db_user }}"
+        password: "{{ zabbix_server_core_db_password }}"
       become: true
       become_user: postgres
 
-    # Grant schema permissions
+    # 6. Zabbixユーザへスキーマ権限の付与
     - name: Grant schema permissions to zabbix user
       community.postgresql.postgresql_privs:
-        database: zabbix
+        database: "{{ zabbix_server_core_db_name }}"
         state: present
         privs: ALL
         type: schema
         objs: public
-        role: zabbix
+        role: "{{ zabbix_server_core_db_user }}"
       become: true
       become_user: postgres
