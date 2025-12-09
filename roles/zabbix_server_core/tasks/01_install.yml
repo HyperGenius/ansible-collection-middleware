@@ -2,7 +2,10 @@
 # Install Zabbix Server package
 - name: Install Zabbix Release RPM
   ansible.builtin.dnf:
-    name: "https://repo.zabbix.com/zabbix/{{ zabbix_server_core_version }}/rhel/{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/zabbix-release-{{ zabbix_server_core_version }}-4.el{{ ansible_distribution_major_version }}.noarch.rpm"
+    name: >-
+      https://repo.zabbix.com/zabbix/{{ zabbix_server_core_version }}/rhel/{{
+      ansible_distribution_major_version }}/{{ ansible_architecture }}/zabbix-release-{{
+      zabbix_server_core_version }}-4.el{{ ansible_distribution_major_version }}.noarch.rpm
     state: present
     disable_gpg_check: true
 

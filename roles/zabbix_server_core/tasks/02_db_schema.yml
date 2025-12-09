@@ -12,7 +12,7 @@
          -U {{ zabbix_server_core_db_user }}
          -d {{ zabbix_server_core_db_name }}
          -tAc "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users'"
-  register: zabbix_table_check
+  register: zabbix_server_core_table_check
   changed_when: false
   failed_when: false
   environment:
@@ -20,13 +20,16 @@
 
 # Import database schema only if tables don't exist
 - name: Import Zabbix database schema
-  ansible.builtin.shell: >
-    zcat /usr/share/zabbix-sql-scripts/postgresql/server.sql.gz |
-    psql -h {{ zabbix_server_core_db_host }}
-         -U {{ zabbix_server_core_db_user }}
-         -d {{ zabbix_server_core_db_name }}
-  when: zabbix_table_check.stdout | default('0') == '0'
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      zcat /usr/share/zabbix-sql-scripts/postgresql/server.sql.gz |
+      psql -h {{ zabbix_server_core_db_host }}
+           -U {{ zabbix_server_core_db_user }}
+           -d {{ zabbix_server_core_db_name }}
+    executable: /bin/bash
+  when: zabbix_server_core_table_check.stdout | default('0') == '0'
   environment:
     PGPASSWORD: "{{ zabbix_server_core_db_password | default('') }}"
-  register: schema_import
-  changed_when: schema_import.rc == 0
+  register: zabbix_server_core_schema_import
+  changed_when: zabbix_server_core_schema_import.rc == 0
