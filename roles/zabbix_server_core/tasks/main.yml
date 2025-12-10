@@ -15,6 +15,7 @@
   ansible.builtin.import_tasks:
     file: 04_configure_nginx.yml
 
+# 実行環境がコンテナの場合のみ追加設定
 - name: Import container hacks tasks
   ansible.builtin.import_tasks:
     file: container_hacks/main.yml

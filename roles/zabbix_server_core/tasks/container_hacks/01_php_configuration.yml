@@ -1,0 +1,29 @@
+---
+# 1. PHP-FPMの設定ファイルをリストアップ
+- name: Find all PHP-FPM config files
+  ansible.builtin.find:
+    paths: /etc/php-fpm.d
+    patterns: "*.conf"
+  register: php_fpm_configs
+
+# 2. 見つかった全ファイルで ACL 設定をコメントアウトして無効化
+- name: Disable PHP-FPM ACL settings for container
+  ansible.builtin.replace:
+    path: "{{ item.path }}"
+    regexp: '^(listen\.acl_)'
+    replace: ';\1'
+  loop: "{{ php_fpm_configs.files }}"
+  notify: Restart PHP-FPM
+
+# 3. Zabbix用ソケットの所有権設定を追加
+# zabbix.conf 内の設定も修正してnginxユーザーがアクセスできるようにする
+- name: Configure PHP-FPM (zabbix pool) socket ownership
+  ansible.builtin.lineinfile:
+    path: /etc/php-fpm.d/zabbix.conf
+    regexp: '^;?listen\.{{ item.key }}\s*='
+    line: "listen.{{ item.key }} = {{ item.value }}"
+  loop:
+    - { key: 'owner', value: 'nginx' }
+    - { key: 'group', value: 'nginx' }
+    - { key: 'mode',  value: '0660' }
+  notify: Restart PHP-FPM

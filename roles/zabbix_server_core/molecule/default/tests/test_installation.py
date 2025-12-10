@@ -5,7 +5,7 @@ Zabbix Server installation tests
 
 def test_zabbix_package_installed(host, zabbix_vars):
     """Zabbix Serverパッケージがインストールされていることを確認する"""
-    package_name = zabbix_vars["package_name"]
+    package_name = zabbix_vars["zabbix_server_core_package_name"]
     p = host.package(package_name)
     assert p.is_installed
 

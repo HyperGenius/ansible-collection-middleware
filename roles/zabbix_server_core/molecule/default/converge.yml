@@ -7,3 +7,8 @@
     - name: Include zabbix_server_core role
       ansible.builtin.include_role:
         name: "middleware.middleware.zabbix_server_core"
+
+    - name: Dump role variables to JSON for Testinfra
+      ansible.builtin.include_role:
+        name: "middleware.middleware.zabbix_server_core"
+        tasks_from: tests/dump_vars.yml
