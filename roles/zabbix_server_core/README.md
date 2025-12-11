@@ -1,34 +1,44 @@
 # zabbix_server_core
 
-統合監視マネージャである **Zabbix Server (PostgreSQL版)** を構築するAnsible Role。
+統合監視マネージャである **Zabbix Server (PostgreSQL版) + Zabbix Web (Nginx版)** を構築するAnsible Role。
 
 ## 概要
 
-このRoleは、Zabbix Serverプロセスの構築に専念します。
-データベース（PostgreSQL）やWebサーバー（Nginx）は、別Role（`postgresql_core`, `nginx_core`）または別サーバーにあることを前提とします。
+このRoleは、Zabbix Serverプロセスの構築およびZabbix Webインターフェース（Nginx + PHP-FPM）の設定を行います。
+データベース（PostgreSQL）は、別Role（`postgresql_core`）または別サーバーにあることを前提とします。
+また、Nginx自体のインストール済みであることを前提とし、本RoleではZabbix用のNginx設定ファイル（`zabbix.conf`）の配置と設定を行います。
 
 ## 特徴
 
-- **コンポーネントの分離**: Zabbix Serverプロセスのみを管理
+- **コンポーネントの分離**: Zabbix ServerプロセスおよびWebインターフェース設定を管理
 - **自動DBスキーマ投入**: 初期構築時にZabbix配布の巨大なSQL (`server.sql.gz`) を自動でインポート
 - **冪等性**: すでにデータがある場合はスキーマ投入をスキップ
 - **機密情報の分離**: `DBPassword` などの機密情報は `conf.d` パターンで別ファイルに配置
+- **Zabbix Web設定**: Nginx用の設定ファイル (`/etc/nginx/conf.d/zabbix.conf`) を自動的に設定
 
 ## Requirements
 
 - PostgreSQL 12以降がインストールされていること
 - Zabbix用のデータベースとユーザーが作成されていること
+- Nginxがインストールされていること（`nginx_core` Role等）
 
 ## Role Variables
 
 ### defaults/main.yml
 
 ```yaml
-zabbix_server_core_version: "6.0"              # Zabbixメジャーバージョン
-zabbix_server_core_db_host: "localhost"         # DB接続先
-zabbix_server_core_db_name: "zabbix"            # DB名
-zabbix_server_core_db_user: "zabbix"            # DBユーザー名
-zabbix_server_core_listen_port: 10051           # リッスンポート
+zabbix_server_core_major_version: "7.4"       # Zabbixメジャーバージョン
+zabbix_server_core_target_version: "7.4.5"    # (参考) 具体的なターゲットバージョン
+zabbix_server_core_repo_rpm_url: "https://repo.zabbix.com/zabbix/{{ zabbix_server_core_major_version }}/release/rhel/{{ ansible_distribution_major_version }}/noarch/zabbix-release-latest-{{ zabbix_server_core_major_version }}.el{{ ansible_distribution_major_version }}.noarch.rpm"
+zabbix_server_core_release: "1"
+
+# DB接続設定
+zabbix_server_core_db_host: "localhost"       # DB接続先
+zabbix_server_core_db_name: "zabbix"          # DB名
+zabbix_server_core_db_user: "zabbix"          # DBユーザー名
+
+zabbix_server_core_listen_port: 10051         # Zabbix Server リッスンポート
+zabbix_server_core_web_port: 80               # Zabbix Web (Nginx) ポート
 ```
 
 **注意**: `zabbix_server_core_db_password` はセキュリティ上、デフォルトでは定義されていません。
@@ -46,7 +56,7 @@ zabbix_server_core_listen_port: 10051           # リッスンポート
 
 ## Dependencies
 
-なし
+なし（ただし、PostgreSQLサーバーへのアクセスおよびNginxのインストールが必要です）
 
 ## Example Playbook
 
@@ -56,10 +66,11 @@ zabbix_server_core_listen_port: 10051           # リッスンポート
 - hosts: monitoring_servers
   become: true
   roles:
-    # 1. PostgreSQLをセットアップ
+    # 1. PostgreSQL/Nginxをセットアップ
     - role: middleware.middleware.postgresql_core
       vars:
-        postgresql_core_version: "14"
+        postgresql_core_version: "16"
+    - role: middleware.middleware.nginx_core
     
     # 2. Zabbix用のDBとユーザーを作成
     - name: Create Zabbix database and user
@@ -78,7 +89,7 @@ zabbix_server_core_listen_port: 10051           # リッスンポート
     # 3. Zabbix Serverをセットアップ（パスワードは変数で渡す）
     - role: middleware.middleware.zabbix_server_core
       vars:
-        zabbix_server_core_version: "6.0"
+        zabbix_server_core_major_version: "7.4"
         zabbix_server_core_db_password: "your_secure_password"
 ```
 
@@ -88,11 +99,11 @@ zabbix_server_core_listen_port: 10051           # リッスンポート
 - hosts: monitoring_servers
   become: true
   tasks:
-    # 1. PostgreSQLをセットアップ
+    # 1. ミドルウェアのセットアップ
     - ansible.builtin.include_role:
         name: middleware.middleware.postgresql_core
-      vars:
-        postgresql_core_version: "14"
+    - ansible.builtin.include_role:
+        name: middleware.middleware.nginx_core
     
     # 2. Zabbix用のDBとユーザーを作成
     # ... (省略)
@@ -101,7 +112,7 @@ zabbix_server_core_listen_port: 10051           # リッスンポート
     - ansible.builtin.include_role:
         name: middleware.middleware.zabbix_server_core
       vars:
-        zabbix_server_core_version: "6.0"
+        zabbix_server_core_major_version: "7.4"
         # パスワードは渡さない - 次のタスクでファイルとして配置
     
     # 4. DBパスワード設定ファイルを作成（プロジェクト管理）

@@ -19,6 +19,9 @@
 - name: Override Zabbix to run in foreground
   ansible.builtin.copy:
     dest: /etc/systemd/system/zabbix-server.service.d/override.conf
+    owner: root
+    group: root
+    mode: '0644'
     content: |
       [Service]
       Type=simple

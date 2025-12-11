@@ -16,7 +16,7 @@
 # 3. Zabbix Server packageのインストール
 - name: Install Zabbix Release RPM
   ansible.builtin.dnf:
-    name: 
+    name:
       - zabbix-server-pgsql
       - zabbix-web-pgsql
       - zabbix-nginx-conf

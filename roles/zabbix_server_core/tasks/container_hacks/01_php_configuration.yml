@@ -23,7 +23,10 @@
     regexp: '^;?listen\.{{ item.key }}\s*='
     line: "listen.{{ item.key }} = {{ item.value }}"
   loop:
-    - { key: 'owner', value: 'nginx' }
-    - { key: 'group', value: 'nginx' }
-    - { key: 'mode',  value: '0660' }
+    - key: owner
+      value: nginx
+    - key: group
+      value: nginx
+    - key: mode
+      value: '0660'
   notify: Restart PHP-FPM
