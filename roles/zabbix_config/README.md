@@ -26,32 +26,32 @@ Zabbix Server構築完了後に、**Zabbix API**を介して論理的な設定�
 
 ```yaml
 # Zabbix API接続情報
-zabbix_api_url: "http://localhost/zabbix"
-zabbix_api_user: "Admin"
-zabbix_api_password: "zabbix"  # Vault等での上書き前提
+zabbix_config_api_url: "http://localhost/zabbix"
+zabbix_config_api_user: "Admin"
+zabbix_config_api_password: "zabbix"  # Vault等での上書き前提
 
 # 自動登録ルール (Auto Registration)
-zabbix_autoreg_name: "Auto registration for Linux"
-zabbix_autoreg_metadata: "Linux"
-zabbix_autoreg_group: "Linux servers"
-zabbix_autoreg_template: "Linux by Zabbix agent"
+zabbix_config_autoreg_name: "Auto registration for Linux"
+zabbix_config_autoreg_metadata: "Linux"
+zabbix_config_autoreg_group: "Linux servers"
+zabbix_config_autoreg_template: "Linux by Zabbix agent"
 
 # API接続設定
-zabbix_api_timeout: 30
-zabbix_api_validate_certs: false
+zabbix_config_api_timeout: 30
+zabbix_config_api_validate_certs: false
 ```
 
-**注意**: `zabbix_api_password`はセキュリティ上、本番環境ではAnsible Vault等で暗号化してください。
+**注意**: `zabbix_config_api_password`はセキュリティ上、本番環境ではAnsible Vault等で暗号化してください。
 
 ### 変数の説明
 
-- `zabbix_api_url`: Zabbix WebインターフェースのURL
-- `zabbix_api_user`: API接続用のユーザー名（デフォルトはAdmin）
-- `zabbix_api_password`: API接続用のパスワード
-- `zabbix_autoreg_name`: 自動登録アクションの名前
-- `zabbix_autoreg_metadata`: エージェント側のメタデータとマッチさせる文字列
-- `zabbix_autoreg_group`: 自動登録時に追加するホストグループ
-- `zabbix_autoreg_template`: 自動登録時にリンクするテンプレート名
+- `zabbix_config_api_url`: Zabbix WebインターフェースのURL
+- `zabbix_config_api_user`: API接続用のユーザー名（デフォルトはAdmin）
+- `zabbix_config_api_password`: API接続用のパスワード
+- `zabbix_config_autoreg_name`: 自動登録アクションの名前
+- `zabbix_config_autoreg_metadata`: エージェント側のメタデータとマッチさせる文字列
+- `zabbix_config_autoreg_group`: 自動登録時に追加するホストグループ
+- `zabbix_config_autoreg_template`: 自動登録時にリンクするテンプレート名
 
 ## Dependencies
 
@@ -67,8 +67,8 @@ zabbix_api_validate_certs: false
   roles:
     - role: middleware.middleware.zabbix_config
       vars:
-        zabbix_api_url: "http://zabbix-server.example.com/zabbix"
-        zabbix_api_password: "{{ vault_zabbix_admin_password }}"
+        zabbix_config_api_url: "http://zabbix-server.example.com/zabbix"
+        zabbix_config_api_password: "{{ vault_zabbix_admin_password }}"
 ```
 
 ### zabbix_server_coreと組み合わせた完全な例
@@ -119,8 +119,8 @@ zabbix_api_validate_certs: false
     - ansible.builtin.include_role:
         name: middleware.middleware.zabbix_config
       vars:
-        zabbix_api_url: "http://{{ hostvars[groups['monitoring_servers'][0]]['ansible_host'] }}/zabbix"
-        zabbix_api_password: "{{ vault_zabbix_admin_password }}"
+        zabbix_config_api_url: "http://{{ hostvars[groups['monitoring_servers'][0]]['ansible_host'] }}/zabbix"
+        zabbix_config_api_password: "{{ vault_zabbix_admin_password }}"
 ```
 
 ## Testing

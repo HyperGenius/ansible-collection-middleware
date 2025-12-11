@@ -12,37 +12,37 @@
 
 - name: ホストグループ作成
   community.zabbix.zabbix_group:
-    server_url: "{{ zabbix_api_url }}"
-    login_user: "{{ zabbix_api_user }}"
-    login_password: "{{ zabbix_api_password }}"
+    server_url: "{{ zabbix_config_api_url }}"
+    login_user: "{{ zabbix_config_api_user }}"
+    login_password: "{{ zabbix_config_api_password }}"
     host_groups:
-      - "{{ zabbix_autoreg_group }}"
+      - "{{ zabbix_config_autoreg_group }}"
     state: present
-    validate_certs: "{{ zabbix_api_validate_certs }}"
+    validate_certs: "{{ zabbix_config_api_validate_certs }}"
   delegate_to: localhost
   run_once: true
 
 - name: オートレジストレーションアクション作成
   community.zabbix.zabbix_action:
-    server_url: "{{ zabbix_api_url }}"
-    login_user: "{{ zabbix_api_user }}"
-    login_password: "{{ zabbix_api_password }}"
-    name: "{{ zabbix_autoreg_name }}"
+    server_url: "{{ zabbix_config_api_url }}"
+    login_user: "{{ zabbix_config_api_user }}"
+    login_password: "{{ zabbix_config_api_password }}"
+    name: "{{ zabbix_config_autoreg_name }}"
     state: present
     status: enabled
     event_source: auto_registration
     conditions:
       - type: host_metadata
         operator: like
-        value: "{{ zabbix_autoreg_metadata }}"
+        value: "{{ zabbix_config_autoreg_metadata }}"
     operations:
       - type: add_host
       - type: add_to_host_group
         host_groups:
-          - "{{ zabbix_autoreg_group }}"
+          - "{{ zabbix_config_autoreg_group }}"
       - type: link_to_template
         templates:
-          - "{{ zabbix_autoreg_template }}"
-    validate_certs: "{{ zabbix_api_validate_certs }}"
+          - "{{ zabbix_config_autoreg_template }}"
+    validate_certs: "{{ zabbix_config_api_validate_certs }}"
   delegate_to: localhost
   run_once: true

@@ -7,10 +7,10 @@
     # 1. Zabbix Web UIの起動を待機
     - name: Wait for Zabbix Web UI to be ready
       ansible.builtin.uri:
-        url: "{{ zabbix_api_url }}/index.php"
+        url: "{{ zabbix_config_api_url }}/index.php"
         status_code: 200
-      register: result
-      until: result.status == 200
+      register: zabbix_config_wait_result
+      until: zabbix_config_wait_result.status == 200
       retries: 30
       delay: 5
 

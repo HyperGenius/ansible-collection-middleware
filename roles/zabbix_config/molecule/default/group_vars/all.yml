@@ -1,19 +1,19 @@
 ---
-# テスト用変数
+# テスト用変数 (zabbix_server_coreで使用される変数)
 zabbix_server_core_db_name: "zabbix"
 zabbix_server_core_db_user: "zabbix"
 zabbix_server_core_db_password: "password_for_test"
 
 # Zabbix API設定
-zabbix_api_url: "http://localhost/zabbix"
-zabbix_api_user: "Admin"
-zabbix_api_password: "zabbix"
+zabbix_config_api_url: "http://localhost/zabbix"
+zabbix_config_api_user: "Admin"
+zabbix_config_api_password: "zabbix"
 
 # 自動登録ルールのテスト設定
-zabbix_autoreg_name: "Auto registration for Linux"
-zabbix_autoreg_metadata: "Linux"
-zabbix_autoreg_group: "Linux servers"
-zabbix_autoreg_template: "Linux by Zabbix agent"
+zabbix_config_autoreg_name: "Auto registration for Linux"
+zabbix_config_autoreg_metadata: "Linux"
+zabbix_config_autoreg_group: "Linux servers"
+zabbix_config_autoreg_template: "Linux by Zabbix agent"
 
-# テストはコンテナ環境で実施
+# テストはコンテナ環境で実施 (zabbix_server_coreで使用される変数)
 is_container_env: true
