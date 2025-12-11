@@ -1,0 +1,26 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    # 1. Zabbix Web UIの起動を待機
+    - name: Wait for Zabbix Web UI to be ready
+      ansible.builtin.uri:
+        url: "{{ zabbix_api_url }}/index.php"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 30
+      delay: 5
+
+    # 2. Zabbix設定の適用
+    - name: Include zabbix_config role
+      ansible.builtin.include_role:
+        name: "middleware.middleware.zabbix_config"
+
+    # 3. 変数のダンプ
+    - name: Dump role variables to JSON for Testinfra
+      ansible.builtin.include_role:
+        name: "middleware.middleware.zabbix_config"
+        tasks_from: tests/dump_vars.yml

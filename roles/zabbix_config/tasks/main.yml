@@ -1,0 +1,48 @@
+---
+# Zabbix Config Role メインタスク
+# Zabbix API経由で論理的な設定を行う
+
+- name: 事前準備 - zabbix-api Pythonライブラリのインストール確認
+  ansible.builtin.pip:
+    name: zabbix-api
+    state: present
+  delegate_to: localhost
+  run_once: true
+  become: false
+
+- name: ホストグループ作成
+  community.zabbix.zabbix_group:
+    server_url: "{{ zabbix_api_url }}"
+    login_user: "{{ zabbix_api_user }}"
+    login_password: "{{ zabbix_api_password }}"
+    host_groups:
+      - "{{ zabbix_autoreg_group }}"
+    state: present
+    validate_certs: "{{ zabbix_api_validate_certs }}"
+  delegate_to: localhost
+  run_once: true
+
+- name: オートレジストレーションアクション作成
+  community.zabbix.zabbix_action:
+    server_url: "{{ zabbix_api_url }}"
+    login_user: "{{ zabbix_api_user }}"
+    login_password: "{{ zabbix_api_password }}"
+    name: "{{ zabbix_autoreg_name }}"
+    state: present
+    status: enabled
+    event_source: auto_registration
+    conditions:
+      - type: host_metadata
+        operator: like
+        value: "{{ zabbix_autoreg_metadata }}"
+    operations:
+      - type: add_host
+      - type: add_to_host_group
+        host_groups:
+          - "{{ zabbix_autoreg_group }}"
+      - type: link_to_template
+        templates:
+          - "{{ zabbix_autoreg_template }}"
+    validate_certs: "{{ zabbix_api_validate_certs }}"
+  delegate_to: localhost
+  run_once: true

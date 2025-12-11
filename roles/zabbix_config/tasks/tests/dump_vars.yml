@@ -1,0 +1,7 @@
+---
+# Testinfra用に変数をJSONファイルに出力する
+- name: Dump Zabbix config variables to JSON for Testinfra
+  ansible.builtin.copy:
+    content: "{{ hostvars[inventory_hostname] | to_nice_json }}"
+    dest: /tmp/zabbix_config_vars.json
+    mode: '0644'
