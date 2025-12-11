@@ -1,0 +1,26 @@
+---
+- name: Import install tasks
+  ansible.builtin.import_tasks:
+    file: 01_install.yml
+
+- name: Import database schema tasks
+  ansible.builtin.import_tasks:
+    file: 02_db_schema.yml
+
+- name: Import configure tasks
+  ansible.builtin.import_tasks:
+    file: 03_configure_zabbix_server.yml
+
+- name: Import configure nginx tasks
+  ansible.builtin.import_tasks:
+    file: 04_configure_nginx.yml
+
+# 実行環境がコンテナの場合のみ追加設定
+- name: Import container hacks tasks
+  ansible.builtin.import_tasks:
+    file: container_hacks/main.yml
+  when: is_container_env | default(false) | bool
+
+- name: Import service tasks
+  ansible.builtin.import_tasks:
+    file: 05_service.yml

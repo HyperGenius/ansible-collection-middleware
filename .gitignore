@@ -3,9 +3,13 @@ venv/
 
 # Python cache files
 **/__pycache__
+.mypy_cache/
 
 # Ansible cache files
 .ansible
 
 # Ansible collection build artifacts
 *.tar.gz
+
+# macOS settings
+.DS_Store

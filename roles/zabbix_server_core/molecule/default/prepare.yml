@@ -1,0 +1,54 @@
+---
+- name: Prepare
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    # 1. PostgreSQLのインストール
+    - name: Install PostgreSQL using postgresql_core role
+      ansible.builtin.include_role:
+        name: "middleware.middleware.postgresql_core"
+      vars:
+        postgresql_core_version: 14
+
+    # 2. PostgreSQLが起動するまで待機
+    - name: Wait for PostgreSQL to be ready
+      ansible.builtin.wait_for:
+        port: 5432
+        delay: 5
+        timeout: 60
+
+    # 3. Python PostgreSQLライブラリのインストール
+    - name: Install Python PostgreSQL library
+      ansible.builtin.pip:
+        name: psycopg2-binary
+        executable: pip3
+
+    # 4. Zabbixデータベースの作成
+    - name: Create Zabbix database
+      community.postgresql.postgresql_db:
+        name: "{{ zabbix_server_core_db_name }}"
+        state: present
+      become: true
+      become_user: postgres
+
+    # 5. Zabbixデータベースユーザーの作成
+    - name: Create Zabbix database user
+      community.postgresql.postgresql_user:
+        db: "{{ zabbix_server_core_db_name }}"
+        name: "{{ zabbix_server_core_db_user }}"
+        password: "{{ zabbix_server_core_db_password }}"
+      become: true
+      become_user: postgres
+
+    # 6. Zabbixユーザへスキーマ権限の付与
+    - name: Grant schema permissions to zabbix user
+      community.postgresql.postgresql_privs:
+        database: "{{ zabbix_server_core_db_name }}"
+        state: present
+        privs: ALL
+        type: schema
+        objs: public
+        role: "{{ zabbix_server_core_db_user }}"
+      become: true
+      become_user: postgres

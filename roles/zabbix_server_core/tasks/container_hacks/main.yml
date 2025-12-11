@@ -1,0 +1,6 @@
+---
+- name: Include PHP configuration
+  ansible.builtin.include_tasks: 01_php_configuration.yml
+
+- name: Include systemd override
+  ansible.builtin.include_tasks: 02_systemd_override_zabbix.yml

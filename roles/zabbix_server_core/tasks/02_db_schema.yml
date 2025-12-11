@@ -1,0 +1,59 @@
+---
+# 1. zabbix-sql-scriptsの場所を探す
+- name: Find all server.sql.gz files
+  ansible.builtin.find:
+    paths:
+      - /usr/share/zabbix-sql-scripts
+      - /usr/share/zabbix
+      - /usr/share/doc
+    patterns: "server.sql.gz"
+    recurse: true
+    file_type: file
+  register: all_schema_files
+
+# 2. パスに "postgresql" が含まれるものだけを抽出 (MySQL用を除外)
+- name: Select PostgreSQL schema file
+  ansible.builtin.set_fact:
+    zabbix_server_core_schema_file: >-
+      {{
+        all_schema_files.files
+        | selectattr('path', 'search', '/postgresql/')
+        | map(attribute='path')
+        | first
+        | default('')
+      }}
+
+# 3. ファイルが見つからなかった時はエラー
+- name: Fail if schema file not found
+  ansible.builtin.fail:
+    msg: "Could not find server.sql.gz for PostgreSQL in /usr/share"
+  when: zabbix_server_core_schema_file == ''
+
+# 4. 初期化済みかチェック (冪等性の担保)
+- name: Check if Zabbix database is already initialized
+  ansible.builtin.command:
+    cmd: >-
+      psql -h {{ zabbix_server_core_db_host }}
+      -U {{ zabbix_server_core_db_user }}
+      -d {{ zabbix_server_core_db_name }}
+      -c "SELECT count(*) FROM users;"
+  environment:
+    PGPASSWORD: "{{ zabbix_server_core_db_password }}"
+  register: zabbix_server_core_schema_check
+  ignore_errors: true
+  # コマンドの失敗(rc=1)を成功扱いとするため記載
+  failed_when: false
+  changed_when: false
+
+# 5. スキーマのインポート, テーブルが存在しない場合のみ実行
+- name: Import Zabbix initial schema
+  ansible.builtin.command:
+    cmd: >-
+      zcat "{{ zabbix_server_core_schema_file }}"
+      | psql -h {{ zabbix_server_core_db_host }}
+      -U {{ zabbix_server_core_db_user }}
+      -d {{ zabbix_server_core_db_name }}
+  environment:
+    PGPASSWORD: "{{ zabbix_server_core_db_password }}"
+  when: zabbix_server_core_schema_check.rc != 0
+  changed_when: false

@@ -1,0 +1,7 @@
+---
+zabbix_server_core_service_name: "zabbix-server"
+zabbix_server_core_package_name: "zabbix-server-pgsql"
+zabbix_server_core_sql_scripts_package: "zabbix-sql-scripts"
+zabbix_server_core_conf_file: "/etc/zabbix/zabbix_server.conf"
+zabbix_server_core_conf_dir: "/etc/zabbix/zabbix_server.conf.d"
+zabbix_server_core_log_file: "/var/log/zabbix/zabbix_server.log"

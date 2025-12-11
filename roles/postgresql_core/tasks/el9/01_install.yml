@@ -9,10 +9,12 @@
 # 2. リポジトリRPMのインストール
 - name: Install PostgreSQL repository RPM
   ansible.builtin.dnf:
-    name: "https://download.postgresql.org/pub/repos/yum/reporpms/ \
-           EL-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}/pgdg-redhat-repo-latest.noarch.rpm"
+    name: "https://download.postgresql.org/pub/repos/yum/reporpms/{{ _reporpm_name }}/{{ _pg_repo_rpm_filename }}"
     state: present
     disable_gpg_check: true
+  vars:
+    _reporpm_name: "EL-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}"
+    _pg_repo_rpm_filename: "pgdg-redhat-repo-latest.noarch.rpm"
 
 # 3. 標準モジュールの無効化
 - name: Disable default postgresql module (RHEL 8/9)
