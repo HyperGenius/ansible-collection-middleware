@@ -11,6 +11,10 @@ ZABBIX_API_URL = "http://localhost/zabbix/api_jsonrpc.php"
 ZABBIX_API_HEADERS = {"Content-Type": "application/json-rpc"}
 ZABBIX_ADMIN_USER = "Admin"
 ZABBIX_ADMIN_PASSWORD = "zabbix"
+ZABBIX_API_TIMEOUT = 30  # タイムアウト設定（秒）
+
+# Zabbix API定数
+CONDITION_TYPE_HOST_METADATA = "24"  # ホストメタデータ条件タイプ
 
 
 @pytest.fixture(scope="module")
@@ -28,7 +32,12 @@ def zabbix_auth_token():
         "id": 1
     }
     
-    response = requests.post(ZABBIX_API_URL, json=auth_payload, headers=ZABBIX_API_HEADERS)
+    response = requests.post(
+        ZABBIX_API_URL,
+        json=auth_payload,
+        headers=ZABBIX_API_HEADERS,
+        timeout=ZABBIX_API_TIMEOUT
+    )
     assert response.status_code == 200
     
     result = response.json()
@@ -64,7 +73,12 @@ def test_auto_registration_action_exists(zabbix_auth_token):
         "id": 2
     }
     
-    action_response = requests.post(ZABBIX_API_URL, json=action_payload, headers=ZABBIX_API_HEADERS)
+    action_response = requests.post(
+        ZABBIX_API_URL,
+        json=action_payload,
+        headers=ZABBIX_API_HEADERS,
+        timeout=ZABBIX_API_TIMEOUT
+    )
     assert action_response.status_code == 200
     
     actions = action_response.json()["result"]
@@ -91,7 +105,12 @@ def test_auto_registration_action_conditions(zabbix_auth_token):
         "id": 2
     }
     
-    action_response = requests.post(ZABBIX_API_URL, json=action_payload, headers=ZABBIX_API_HEADERS)
+    action_response = requests.post(
+        ZABBIX_API_URL,
+        json=action_payload,
+        headers=ZABBIX_API_HEADERS,
+        timeout=ZABBIX_API_TIMEOUT
+    )
     assert action_response.status_code == 200
     
     actions = action_response.json()["result"]
@@ -107,7 +126,7 @@ def test_auto_registration_action_conditions(zabbix_auth_token):
     # HostMetadata条件が含まれていること
     metadata_condition_found = False
     for condition in conditions:
-        if condition.get("conditiontype") == "24":  # 24 = Host metadata
+        if condition.get("conditiontype") == CONDITION_TYPE_HOST_METADATA:
             metadata_condition_found = True
             assert "Linux" in condition.get("value", "")
     
@@ -132,7 +151,12 @@ def test_host_group_exists(zabbix_auth_token):
         "id": 3
     }
     
-    group_response = requests.post(ZABBIX_API_URL, json=group_payload, headers=ZABBIX_API_HEADERS)
+    group_response = requests.post(
+        ZABBIX_API_URL,
+        json=group_payload,
+        headers=ZABBIX_API_HEADERS,
+        timeout=ZABBIX_API_TIMEOUT
+    )
     assert group_response.status_code == 200
     
     groups = group_response.json()["result"]
