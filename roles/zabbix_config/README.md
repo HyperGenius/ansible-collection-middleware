@@ -28,7 +28,7 @@ Zabbix Server構築完了後に、**Zabbix API**を介して論理的な設定�
 # Zabbix API接続情報
 zabbix_config_api_url: "http://localhost/zabbix"
 zabbix_config_api_user: "Admin"
-zabbix_config_api_password: "zabbix"  # Vault等での上書き前提
+# zabbix_config_api_password: セキュリティのため、デフォルト値なし（必須設定）
 
 # 自動登録ルール (Auto Registration)
 zabbix_config_autoreg_name: "Auto registration for Linux"
@@ -41,7 +41,16 @@ zabbix_config_api_timeout: 30
 zabbix_config_api_validate_certs: false
 ```
 
-**注意**: `zabbix_config_api_password`はセキュリティ上、本番環境ではAnsible Vault等で暗号化してください。
+**重要**: `zabbix_config_api_password`はセキュリティ上、デフォルト値を設定していません。
+以下のいずれかの方法で設定してください：
+
+1. **テスト環境**: group_vars や host_vars で直接設定
+2. **本番環境**: Ansible Vault で暗号化して設定（強く推奨）
+
+```bash
+# Ansible Vaultで暗号化する例
+ansible-vault encrypt_string 'your_password' --name 'zabbix_config_api_password'
+```
 
 ### 変数の説明
 
