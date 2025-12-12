@@ -11,3 +11,5 @@ nginx_server_tokens: "off"
 nginx_client_max_body_size: "1m"
 nginx_keepalive_timeout: "65"
 nginx_global_params: {}
+# デフォルトサーバーを有効にする場合はtrue
+nginx_enable_default_server: true
