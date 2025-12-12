@@ -6,7 +6,7 @@ driver:
   name: docker
 
 platforms:
-  - name: instance
+  - name: instance_zabbix_server_config
     # デフォルトは rockylinux9、環境変数があればそれを使う
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-rockylinux9}-ansible:latest"
     privileged: true

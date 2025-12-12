@@ -1,26 +1,20 @@
 ---
 - name: Converge
   hosts: all
-  become: true
+  become: false
   gather_facts: true
+  environment:
+    # 127.0.0.1 と localhost へのアクセスではプロキシを使わないことを強制
+    NO_PROXY: "127.0.0.1,localhost,{{ inventory_hostname }}"
+    no_proxy: "127.0.0.1,localhost,{{ inventory_hostname }}"
   tasks:
-    # 1. Zabbix Web UIの起動を待機
-    - name: Wait for Zabbix Web UI to be ready
-      ansible.builtin.uri:
-        url: "{{ zabbix_config_api_url }}/index.php"
-        status_code: 200
-      register: zabbix_config_wait_result
-      until: zabbix_config_wait_result.status == 200
-      retries: 30
-      delay: 5
-
-    # 2. Zabbix設定の適用
+    # 1. Zabbix設定の適用
     - name: Include zabbix_config role
       ansible.builtin.include_role:
         name: "middleware.middleware.zabbix_config"
 
-    # 3. 変数のダンプ
-    - name: Dump role variables to JSON for Testinfra
-      ansible.builtin.include_role:
-        name: "middleware.middleware.zabbix_config"
-        tasks_from: tests/dump_vars.yml
+    # 2. 変数のダンプ
+    # - name: Dump role variables to JSON for Testinfra
+    #   ansible.builtin.include_role:
+    #     name: "middleware.middleware.zabbix_config"
+    #     tasks_from: tests/dump_vars.yml

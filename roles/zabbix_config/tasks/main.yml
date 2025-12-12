@@ -1,35 +1,33 @@
 ---
-# Zabbix Config Role メインタスク
-# Zabbix API経由で論理的な設定を行う
-
-- name: 事前準備 - zabbix-api Pythonライブラリのインストール確認
-  ansible.builtin.pip:
-    name: zabbix-api
-    state: present
+- name: Include prepare tasks
+  ansible.builtin.import_tasks:
+    file: 01_prepare.yml
   delegate_to: localhost
-  run_once: true
-  become: false
 
-- name: ホストグループ作成
+# ホストグループ作成
+- name: Create host group
   community.zabbix.zabbix_group:
-    server_url: "{{ zabbix_config_api_url }}"
-    login_user: "{{ zabbix_config_api_user }}"
-    login_password: "{{ zabbix_config_api_password }}"
     host_groups:
       - "{{ zabbix_config_autoreg_group }}"
     state: present
-    validate_certs: "{{ zabbix_config_api_validate_certs }}"
-  delegate_to: localhost
-  run_once: true
+  vars:
+    ansible_connection: httpapi
+    ansible_network_os: community.zabbix.zabbix
+    ansible_host: "{{ zabbix_config_server_hostname }}"
+    ansible_httpapi_port: "{{ zabbix_config_server_port }}"
+    ansible_zabbix_url_path: "{{ zabbix_config_url_path }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_config_httpapi_use_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_config_httpapi_validate_certs }}"
+    ansible_user: "{{ zabbix_config_api_user }}"
+    ansible_httpapi_pass: "{{ zabbix_config_api_password}}"
 
-- name: オートレジストレーションアクション作成
+# オートレジストレーションアクション作成
+- name: Create auto registration action
   community.zabbix.zabbix_action:
-    server_url: "{{ zabbix_config_api_url }}"
-    login_user: "{{ zabbix_config_api_user }}"
-    login_password: "{{ zabbix_config_api_password }}"
     name: "{{ zabbix_config_autoreg_name }}"
     state: present
     status: enabled
+    esc_period: 60
     event_source: auto_registration
     conditions:
       - type: host_metadata
@@ -43,6 +41,13 @@
       - type: link_to_template
         templates:
           - "{{ zabbix_config_autoreg_template }}"
-    validate_certs: "{{ zabbix_config_api_validate_certs }}"
-  delegate_to: localhost
-  run_once: true
+  vars:
+    ansible_connection: httpapi
+    ansible_network_os: community.zabbix.zabbix
+    ansible_host: "{{ zabbix_config_server_hostname }}"
+    ansible_httpapi_port: "{{ zabbix_config_server_port }}"
+    ansible_zabbix_url_path: "{{ zabbix_config_url_path }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_config_httpapi_use_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_config_httpapi_validate_certs }}"
+    ansible_user: "{{ zabbix_config_api_user }}"
+    ansible_httpapi_pass: "{{ zabbix_config_api_password}}"

@@ -4,10 +4,10 @@ zabbix_server_core_db_name: "zabbix"
 zabbix_server_core_db_user: "zabbix"
 zabbix_server_core_db_password: "password_for_test"
 
-# Zabbix API設定
-zabbix_config_api_url: "http://localhost/zabbix"
-zabbix_config_api_user: "Admin"
+# Zabbix API設定, テスト用Zabbixコンテナは8080ポートで起動している
+zabbix_config_server_hostname: "localhost"
 zabbix_config_api_password: "zabbix"
+zabbix_config_server_port: "8080"
 
 # 自動登録ルールのテスト設定
 zabbix_config_autoreg_name: "Auto registration for Linux"

@@ -4,27 +4,34 @@
   become: true
   gather_facts: true
   tasks:
-    # 1. PostgreSQLのインストール
+    # 1. Nginxのインストール
+    - name: Install Nginx using nginx_core role
+      ansible.builtin.include_role:
+        name: "middleware.middleware.nginx_core"
+      vars:
+        nginx_enable_default_server: false
+
+    # 2. PostgreSQLのインストール
     - name: Install PostgreSQL using postgresql_core role
       ansible.builtin.include_role:
         name: "middleware.middleware.postgresql_core"
       vars:
         postgresql_core_version: 14
 
-    # 2. PostgreSQLが起動するまで待機
+    # 3. PostgreSQLが起動するまで待機
     - name: Wait for PostgreSQL to be ready
       ansible.builtin.wait_for:
         port: 5432
         delay: 5
         timeout: 60
 
-    # 3. Python PostgreSQLライブラリのインストール
+    # 4. Python PostgreSQLライブラリのインストール
     - name: Install Python PostgreSQL library
       ansible.builtin.pip:
         name: psycopg2-binary
         executable: pip3
 
-    # 4. Zabbixデータベースの作成
+    # 5. Zabbixデータベースの作成
     - name: Create Zabbix database
       community.postgresql.postgresql_db:
         name: "{{ zabbix_server_core_db_name }}"
@@ -32,7 +39,7 @@
       become: true
       become_user: postgres
 
-    # 5. Zabbixデータベースユーザーの作成
+    # 6. Zabbixデータベースユーザーの作成
     - name: Create Zabbix database user
       community.postgresql.postgresql_user:
         db: "{{ zabbix_server_core_db_name }}"
@@ -41,7 +48,7 @@
       become: true
       become_user: postgres
 
-    # 6. Zabbixユーザへスキーマ権限の付与
+    # 7. Zabbixユーザへスキーマ権限の付与
     - name: Grant schema permissions to zabbix user
       community.postgresql.postgresql_privs:
         database: "{{ zabbix_server_core_db_name }}"
@@ -53,7 +60,7 @@
       become: true
       become_user: postgres
 
-    # 7. Zabbix Serverのインストールと構築
+    # 8. Zabbix Serverのインストールと構築
     - name: Install Zabbix Server using zabbix_server_core role
       ansible.builtin.include_role:
         name: "middleware.middleware.zabbix_server_core"

@@ -1,19 +1,18 @@
 ---
 # Zabbix API接続情報
-zabbix_config_api_url: "http://localhost/zabbix"
+zabbix_config_server_hostname: "localhost"
+zabbix_config_server_port: "80"
+zabbix_config_url_path: ""
 zabbix_config_api_user: "Admin"
-# Note: zabbix_config_api_passwordはセキュリティ上、デフォルト値を設定していません
+zabbix_config_httpapi_use_ssl: false
+zabbix_config_httpapi_validate_certs: false
+# --- Note ---
+# zabbix_config_api_passwordはセキュリティ上、デフォルト値を設定していません
 # テスト環境や開発環境では group_vars や host_vars で設定してください
 # 本番環境では Ansible Vault で暗号化して設定することを強く推奨します
-# デフォルト値が必要な場合は、以下のように設定してください:
-# zabbix_config_api_password: "your_secure_password"
 
 # 自動登録ルール (Auto Registration)
 zabbix_config_autoreg_name: "Auto registration for Linux"
 zabbix_config_autoreg_metadata: "Linux"
 zabbix_config_autoreg_group: "Linux servers"
 zabbix_config_autoreg_template: "Linux by Zabbix agent"
-
-# API接続タイムアウト設定
-zabbix_config_api_timeout: 30
-zabbix_config_api_validate_certs: false
