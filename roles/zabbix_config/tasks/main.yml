@@ -19,7 +19,7 @@
     ansible_httpapi_use_ssl: "{{ zabbix_config_httpapi_use_ssl }}"
     ansible_httpapi_validate_certs: "{{ zabbix_config_httpapi_validate_certs }}"
     ansible_user: "{{ zabbix_config_api_user }}"
-    ansible_httpapi_pass: "{{ zabbix_config_api_password}}"
+    ansible_httpapi_pass: "{{ zabbix_config_api_password }}"
 
 # オートレジストレーションアクション作成
 - name: Create auto registration action
@@ -50,4 +50,4 @@
     ansible_httpapi_use_ssl: "{{ zabbix_config_httpapi_use_ssl }}"
     ansible_httpapi_validate_certs: "{{ zabbix_config_httpapi_validate_certs }}"
     ansible_user: "{{ zabbix_config_api_user }}"
-    ansible_httpapi_pass: "{{ zabbix_config_api_password}}"
+    ansible_httpapi_pass: "{{ zabbix_config_api_password }}"
