@@ -14,7 +14,7 @@
         name: "middleware.middleware.zabbix_config"
 
     # 2. 変数のダンプ
-    # - name: Dump role variables to JSON for Testinfra
-    #   ansible.builtin.include_role:
-    #     name: "middleware.middleware.zabbix_config"
-    #     tasks_from: tests/dump_vars.yml
+    - name: Dump role variables to JSON for Testinfra
+      ansible.builtin.include_role:
+        name: "middleware.middleware.zabbix_config"
+        tasks_from: tests/dump_vars.yml
