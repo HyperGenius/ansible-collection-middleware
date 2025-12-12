@@ -47,12 +47,13 @@
 
 # 5. スキーマのインポート, テーブルが存在しない場合のみ実行
 - name: Import Zabbix initial schema
-  ansible.builtin.command:
+  ansible.builtin.shell:
     cmd: >-
-      zcat "{{ zabbix_server_core_schema_file }}"
+      set -o pipefail && zcat "{{ zabbix_server_core_schema_file }}"
       | psql -h {{ zabbix_server_core_db_host }}
       -U {{ zabbix_server_core_db_user }}
       -d {{ zabbix_server_core_db_name }}
+    executable: /bin/bash
   environment:
     PGPASSWORD: "{{ zabbix_server_core_db_password }}"
   when: zabbix_server_core_schema_check.rc != 0
