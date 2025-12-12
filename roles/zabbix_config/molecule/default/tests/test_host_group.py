@@ -1,4 +1,4 @@
-import requests
+from tests.helpers import post_zabbix_api
 
 
 def test_host_group_exists(zabbix_config_vars):
@@ -7,8 +7,6 @@ def test_host_group_exists(zabbix_config_vars):
     """
 
     # パラメータ取得
-    api_url = zabbix_config_vars["zabbix_api_url"]
-    auth_token = zabbix_config_vars["zabbix_auth_token"]
     expected_group_name = zabbix_config_vars["zabbix_config_autoreg_group"]
 
     # ホストグループ取得
@@ -19,15 +17,7 @@ def test_host_group_exists(zabbix_config_vars):
         "id": 3,
     }
 
-    group_response = requests.post(
-        api_url,
-        json=group_payload,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + auth_token,
-        },
-        timeout=30,
-    )
+    group_response = post_zabbix_api(zabbix_config_vars, group_payload)
     assert group_response.status_code == 200
     assert "result" in group_response.json()
 

@@ -1,4 +1,5 @@
 import requests
+from tests.helpers import post_zabbix_api
 
 # Zabbix API定数
 CONDITION_TYPE_HOST_METADATA = "24"  # ホストメタデータ条件タイプ
@@ -10,8 +11,6 @@ def test_auto_registration_action_exists(zabbix_config_vars):
     """
 
     # パラメータ取得
-    api_url = zabbix_config_vars["zabbix_api_url"]
-    auth_token = zabbix_config_vars["zabbix_auth_token"]
     auto_registration_action_name = zabbix_config_vars["zabbix_config_autoreg_name"]
 
     # アクション取得
@@ -25,15 +24,7 @@ def test_auto_registration_action_exists(zabbix_config_vars):
         "id": 2,
     }
 
-    action_response = requests.post(
-        api_url,
-        json=action_payload,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + auth_token,
-        },
-        timeout=30,
-    )
+    action_response = post_zabbix_api(zabbix_config_vars, action_payload)
     assert action_response.status_code == 200
 
     actions = action_response.json()["result"]
@@ -47,9 +38,6 @@ def test_auto_registration_action_conditions(zabbix_config_vars):
     """
 
     # パラメータ取得
-    api_url = zabbix_config_vars["zabbix_api_url"]
-    auth_token = zabbix_config_vars["zabbix_auth_token"]
-    expected_group_name = zabbix_config_vars["zabbix_config_autoreg_group"]
     auto_registration_action_name = zabbix_config_vars["zabbix_config_autoreg_name"]
 
     # アクション取得（条件含む）
@@ -64,15 +52,7 @@ def test_auto_registration_action_conditions(zabbix_config_vars):
         "id": 2,
     }
 
-    action_response = requests.post(
-        api_url,
-        json=action_payload,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + auth_token,
-        },
-        timeout=30,
-    )
+    action_response = post_zabbix_api(zabbix_config_vars, action_payload)
     assert action_response.status_code == 200
 
     actions = action_response.json()["result"]
