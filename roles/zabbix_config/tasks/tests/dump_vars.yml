@@ -1,0 +1,19 @@
+---
+# testinfra用に変数データをJSONファイルに出力
+- name: Dump role variables to JSON for Testinfra
+  ansible.builtin.copy:
+    content: |
+      {{
+        {
+          'zabbix_config_server_hostname': zabbix_config_server_hostname,
+          'zabbix_config_server_port': zabbix_config_server_port,
+          'zabbix_config_api_user': zabbix_config_api_user,
+          'zabbix_config_api_password': zabbix_config_api_password,
+          'zabbix_config_autoreg_name': zabbix_config_autoreg_name,
+          'zabbix_config_autoreg_metadata': zabbix_config_autoreg_metadata,
+          'zabbix_config_autoreg_group': zabbix_config_autoreg_group,
+          'zabbix_config_autoreg_template': zabbix_config_autoreg_template,
+        } | to_nice_json
+      }}
+    dest: /tmp/ansible_vars.json
+    mode: '0644'

@@ -1,0 +1,30 @@
+---
+dependency:
+  name: galaxy
+
+driver:
+  name: docker
+
+platforms:
+  - name: instance_zabbix_server_config
+    # デフォルトは rockylinux9、環境変数があればそれを使う
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-rockylinux9}-ansible:latest"
+    privileged: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    command: "/usr/sbin/init"
+    published_ports:
+      - "0.0.0.0:8080:80/tcp"  # Web UI (Nginx)
+      - "0.0.0.0:10051:10051/tcp"  # Zabbix Server
+
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_FORCE_COLOR: "1"
+  ansible_args:
+    - --diff
+  playbook: prepare.yml
+
+verifier:
+  name: testinfra

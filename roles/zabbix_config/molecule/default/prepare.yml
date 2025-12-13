@@ -10,7 +10,7 @@
         name: "middleware.middleware.nginx_core"
       vars:
         nginx_enable_default_server: false
-  
+
     # 2. PostgreSQLのインストール
     - name: Install PostgreSQL using postgresql_core role
       ansible.builtin.include_role:
@@ -59,3 +59,8 @@
         role: "{{ zabbix_server_core_db_user }}"
       become: true
       become_user: postgres
+
+    # 8. Zabbix Serverのインストールと構築
+    - name: Install Zabbix Server using zabbix_server_core role
+      ansible.builtin.include_role:
+        name: "middleware.middleware.zabbix_server_core"

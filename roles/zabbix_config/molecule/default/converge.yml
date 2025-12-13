@@ -1,0 +1,20 @@
+---
+- name: Converge
+  hosts: all
+  become: false
+  gather_facts: true
+  environment:
+    # 127.0.0.1 と localhost へのアクセスではプロキシを使わないことを強制
+    NO_PROXY: "127.0.0.1,localhost,{{ inventory_hostname }}"
+    no_proxy: "127.0.0.1,localhost,{{ inventory_hostname }}"
+  tasks:
+    # 1. Zabbix設定の適用
+    - name: Include zabbix_config role
+      ansible.builtin.include_role:
+        name: "middleware.middleware.zabbix_config"
+
+    # 2. 変数のダンプ
+    - name: Dump role variables to JSON for Testinfra
+      ansible.builtin.include_role:
+        name: "middleware.middleware.zabbix_config"
+        tasks_from: tests/dump_vars.yml

@@ -1,0 +1,7 @@
+---
+# 事前準備 - zabbix-api Pythonライブラリのインストール確認
+- name: Install zabbix-api Python library
+  ansible.builtin.pip:
+    name: zabbix-api
+    state: present
+  delegate_to: localhost

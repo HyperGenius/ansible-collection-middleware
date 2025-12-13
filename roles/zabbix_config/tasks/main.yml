@@ -1,0 +1,53 @@
+---
+- name: Include prepare tasks
+  ansible.builtin.import_tasks:
+    file: 01_prepare.yml
+  delegate_to: localhost
+
+# ホストグループ作成
+- name: Create host group
+  community.zabbix.zabbix_group:
+    host_groups:
+      - "{{ zabbix_config_autoreg_group }}"
+    state: present
+  vars:
+    ansible_connection: httpapi
+    ansible_network_os: community.zabbix.zabbix
+    ansible_host: "{{ zabbix_config_server_hostname }}"
+    ansible_httpapi_port: "{{ zabbix_config_server_port }}"
+    ansible_zabbix_url_path: "{{ zabbix_config_url_path }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_config_httpapi_use_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_config_httpapi_validate_certs }}"
+    ansible_user: "{{ zabbix_config_api_user }}"
+    ansible_httpapi_pass: "{{ zabbix_config_api_password }}"
+
+# オートレジストレーションアクション作成
+- name: Create auto registration action
+  community.zabbix.zabbix_action:
+    name: "{{ zabbix_config_autoreg_name }}"
+    state: present
+    status: enabled
+    esc_period: 60
+    event_source: auto_registration
+    conditions:
+      - type: host_metadata
+        operator: like
+        value: "{{ zabbix_config_autoreg_metadata }}"
+    operations:
+      - type: add_host
+      - type: add_to_host_group
+        host_groups:
+          - "{{ zabbix_config_autoreg_group }}"
+      - type: link_to_template
+        templates:
+          - "{{ zabbix_config_autoreg_template }}"
+  vars:
+    ansible_connection: httpapi
+    ansible_network_os: community.zabbix.zabbix
+    ansible_host: "{{ zabbix_config_server_hostname }}"
+    ansible_httpapi_port: "{{ zabbix_config_server_port }}"
+    ansible_zabbix_url_path: "{{ zabbix_config_url_path }}"
+    ansible_httpapi_use_ssl: "{{ zabbix_config_httpapi_use_ssl }}"
+    ansible_httpapi_validate_certs: "{{ zabbix_config_httpapi_validate_certs }}"
+    ansible_user: "{{ zabbix_config_api_user }}"
+    ansible_httpapi_pass: "{{ zabbix_config_api_password }}"
