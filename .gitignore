@@ -13,3 +13,6 @@ venv/
 
 # macOS settings
 .DS_Store
+
+# ローカルテスト用
+test/
