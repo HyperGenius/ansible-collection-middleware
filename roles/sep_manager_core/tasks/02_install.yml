@@ -1,0 +1,24 @@
+---
+# 1. SEPMのインストールチェック
+- name: Check if SEPM is already installed
+  ansible.windows.win_reg_stat:
+    path: HKLM:\SOFTWARE\Symantec\Symantec Endpoint Protection Manager
+    name: Version
+  register: sepm_registry
+
+# 2. 応答ファイルの作成
+- name: Create response file for silent installation
+  ansible.windows.win_template:
+    src: response.var.j2
+    dest: "{{ symantec_ep_manager_core_installer_path | win_dirname }}\\response.var"
+  when: not sepm_registry.exists
+
+# 3. サイレントインストール
+- name: Install Symantec Endpoint Protection Manager
+  ansible.windows.win_package:
+    path: "{{ symantec_ep_manager_core_installer_path }}"
+    product_id: "{{ symantec_ep_manager_core_product_id }}"
+    arguments: >-
+      /s /v"/qn /L*v C:\\Temp\\sepm_install.log RESPONSEFILE={{ symantec_ep_manager_core_installer_path | win_dirname }}\\response.var"
+    state: present
+  when: not sepm_registry.exists

@@ -1,0 +1,13 @@
+---
+# 1. 一時ディレクトリ作成
+- name: Create temporary directory
+  ansible.windows.win_file:
+    path: "{{ symantec_ep_manager_core_installer_path | win_dirname }}"
+    state: directory
+
+# 2. インストーラー配置。
+- name: Copy installer package
+  ansible.windows.win_copy:
+    src: "{{ symantec_ep_manager_core_installer_source }}"
+    dest: "{{ symantec_ep_manager_core_installer_path }}"
+    force: false
