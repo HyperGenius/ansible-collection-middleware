@@ -1,0 +1,16 @@
+[ResponseResult]
+ResultCode=0
+
+[Application]
+Name=Symantec Endpoint Protection Manager
+Version={{ symantec_ep_manager_core_version }}
+Company=Symantec
+Lang=0409
+
+[Install]
+Dir={{ symantec_ep_manager_core_install_dir }}
+AdminUser={{ symantec_ep_manager_core_admin_username }}
+# AdminPassword={{ symantec_ep_manager_core_admin_password | default('') }}
+DbType={{ symantec_ep_manager_core_db_type }}
+DbHost={{ symantec_ep_manager_core_db_host }}
+DbPort={{ symantec_ep_manager_core_db_port }}

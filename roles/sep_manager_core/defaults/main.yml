@@ -1,0 +1,16 @@
+---
+# バージョン・インストーラー指定
+symantec_ep_manager_core_version: "14.3.1"
+symantec_ep_manager_core_product_id: ""  # アンインストールやアップグレード判定用のProductCode
+symantec_ep_manager_core_installer_path: "C:\\Temp\\Symantec_SEPM_Installer.exe"
+symantec_ep_manager_core_installer_source: "\\\\share\\installers\\SEPM_14.3.exe" # 外部ソース
+
+# インストール設定
+symantec_ep_manager_core_install_dir: "C:\\Program Files (x86)\\Symantec\\Symantec Endpoint Protection Manager"
+symantec_ep_manager_core_admin_username: "admin"
+# symantec_ep_manager_core_admin_password: "" # Vaultで管理推奨
+
+# DB設定 (Embedded or SQL Server)
+symantec_ep_manager_core_db_type: "embedded" # or 'sqlserver'
+symantec_ep_manager_core_db_host: "localhost"
+symantec_ep_manager_core_db_port: 1433
