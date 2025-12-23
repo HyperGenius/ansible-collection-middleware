@@ -1,0 +1,46 @@
+- name: Test with Pester
+  hosts: windows
+  gather_facts: no
+  vars:
+    pester_test_file: "./pester/Wsus.Tests.ps1"
+    pester_test_file_dest: 'C:\Temp\Wsus.Tests.ps1'
+
+  tasks:
+    # 1. Pesterのインストール
+    - name: Install Pester module
+      community.windows.win_psmodule:
+        name: Pester
+        state: latest
+        allow_clobber: yes
+        skip_publisher_check: yes
+
+    # 2. テストファイルをWindowsへ転送
+    - name: Copy Pester test file
+      ansible.windows.win_copy:
+        src: "{{ pester_test_file }}"
+        dest: "{{ pester_test_file_dest }}"
+
+    # 3. Pesterを実行
+    - name: Run Pester Tests
+      ansible.windows.win_shell: |
+        # 出力をUTF-8に設定
+        $OutputEncoding = [System.Text.Encoding]::UTF8
+        [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
+        # Pesterを実行し、失敗があれば終了コード1を返す設定
+        Import-Module Pester -MinimumVersion 5.0 -Force
+
+        $config = New-PesterConfiguration
+        $config.Run.Path = "{{ pester_test_file_dest }}"
+        $config.Run.Exit = $true
+        $config.Output.Verbosity = 'Detailed'
+
+        Invoke-Pester -Configuration $config
+      register: pester_result
+      # テスト失敗時にPlaybookも失敗させる
+      failed_when: pester_result.rc != 0
+
+    # 4. 結果の表示 (デバッグ用)
+    - name: Show Pester Output
+      debug:
+        var: pester_result.stdout_lines

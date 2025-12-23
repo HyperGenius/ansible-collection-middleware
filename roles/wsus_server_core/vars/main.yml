@@ -1,0 +1,7 @@
+---
+# Service Names
+wsus_server_core_service_name: WsusService
+wsus_server_core_iis_service_name: W3SVC
+
+# Executable paths
+wsus_server_core_wsusutil_path: 'C:\Program Files\Update Services\Tools\wsusutil.exe'

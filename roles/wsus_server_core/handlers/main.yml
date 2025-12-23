@@ -1,0 +1,10 @@
+---
+- name: Restart WSUS
+  ansible.windows.win_service:
+    name: "{{ wsus_server_core_service_name }}"
+    state: restarted
+
+- name: Restart IIS
+  ansible.windows.win_service:
+    name: "{{ wsus_server_core_iis_service_name }}"
+    state: restarted

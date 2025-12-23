@@ -1,0 +1,20 @@
+---
+- name: Test Role
+  hosts: windows
+  gather_facts: false  # テスト高速化のため全体ではOFF
+
+  tasks:
+    # 1. 接続確認
+    - name: Verify connection
+      ansible.windows.win_ping:
+
+    # 2. 作成したRoleを実行 (インストール)
+    - name: Run wsus_server_core role
+      import_role:
+        name: ../../wsus_server_core
+
+    # 3. 検証
+    - name: Verify WSUS installation
+      ansible.windows.win_service:
+        name: WsusService
+        state: started
