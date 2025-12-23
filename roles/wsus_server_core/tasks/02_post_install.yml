@@ -1,0 +1,28 @@
+---
+# 1. WSUSのコンテンツディレクトリを確認
+- name: Ensure WSUS Content Directory exists
+  ansible.windows.win_file:
+    path: "{{ wsus_server_core_content_dir }}"
+    state: directory
+
+# 2. WSUSが設定済みか確認 (WsusContentフォルダの有無)
+- name: Check if WSUS is configured
+  ansible.windows.win_stat:
+    path: "{{ wsus_server_core_content_dir }}\\WsusContent"
+  register: wsus_content
+
+# 3. WSUSの初期設定 (PostInstall)
+- name: Run WSUS PostInstall (Initialize WID and Content Dir)
+  ansible.windows.win_command: >
+    "{{ wsus_server_core_wsusutil_path }}" postinstall CONTENT_DIR="{{ wsus_server_core_content_dir }}"
+  when: not wsus_content.stat.exists
+  notify:
+    - Restart WSUS
+    - Restart IIS
+
+# 4. WSUSサービスを起動
+- name: Ensure WSUS Service is started
+  ansible.windows.win_service:
+    name: "{{ wsus_server_core_service_name }}"
+    state: "{{ wsus_server_core_service_state }}"
+    start_mode: auto

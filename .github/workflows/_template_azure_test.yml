@@ -1,0 +1,93 @@
+name: Reusable Infrastructure Test Logic
+
+on:
+  workflow_call:  # 他のWorkflowから呼ばれる専用
+    inputs:
+      tf_working_dir:
+        required: true
+        type: string
+        description: "Path to Terraform directory"
+      ansible_playbook_path:
+        required: true
+        type: string
+        description: "Path to Ansible playbook"
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_CLIENT_SECRET:
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      VM_ADMIN_PASSWORD:
+        required: true
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        # 受け取った引数(inputs)を使用
+        working-directory: ${{ inputs.tf_working_dir }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # --- 1. Terraform Setup & Apply ---
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve
+      
+      # 作成されたIPアドレスを取得して環境変数にセット
+      - name: Get VM IP
+        run: |
+          echo "VM_IP=$(terraform output -raw public_ip)" >> $GITHUB_ENV
+
+      # --- 2. Ansible Setup & Run ---
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Ansible and dependencies
+        run: |
+          pip install ansible pywinrm
+      
+      # インベントリファイルを動的生成
+      - name: Create Inventory
+        run: |
+          cat <<EOF > inventory.ini
+          [windows]
+          ${{ env.VM_IP }}
+
+          [windows:vars]
+          ansible_user=azureuser
+          ansible_password=${{ secrets.VM_ADMIN_PASSWORD }}
+          ansible_connection=winrm
+          ansible_winrm_server_cert_validation=ignore
+          ansible_port=5986
+          ansible_winrm_scheme=https
+          ansible_winrm_transport=basic
+          EOF
+          # UbuntuランナーなのでM1 Mac用の暗号化無効設定は不要です
+
+      # --- 3. Ansible Playbook実行 ---     
+      # 例: Playbook実行
+      - name: Run Ansible Playbook
+        run: |
+          # inputsを参照
+          ansible-playbook -i inventory.ini ${{ inputs.ansible_playbook_path }}
+      
+      # --- 4. Cleanup (Always run) ---
+      # テストが成功しても失敗しても必ず実行して課金を止める
+      - name: Terraform Destroy
+        if: always() 
+        run: terraform destroy -auto-approve

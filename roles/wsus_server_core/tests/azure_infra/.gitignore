@@ -1,0 +1,15 @@
+# Terraform関連
+# ローカルの一時ファイル（プラグインなど）
+.terraform/
+.terraform.lock.hcl
+.terraform.tfstate.lock.info
+
+# 状態管理ファイル
+*.tfstate
+*.tfstate.backup
+
+# 変数ファイル
+*.tfvars
+
+# クラッシュログ
+crash.log

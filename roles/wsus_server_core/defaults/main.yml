@@ -1,0 +1,17 @@
+---
+# WSUS コンテンツの保存先ディレクトリ
+wsus_server_core_content_dir: 'C:\WSUS'
+
+# インストールするWSUSの機能コンポーネント
+# UpdateServices-WidDB: WID Database (Default)
+# UpdateServices-Services: WSUS Services
+# UpdateServices-RSAT: Management Tools
+wsus_server_core_features:
+  - UpdateServices
+  - UpdateServices-WidDB
+  - UpdateServices-Services
+  - UpdateServices-RSAT
+
+# サービスの基本状態
+wsus_server_core_service_state: started
+wsus_server_core_service_enabled: true

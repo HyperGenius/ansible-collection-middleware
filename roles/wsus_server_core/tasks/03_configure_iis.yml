@@ -1,0 +1,8 @@
+---
+# 3. WsusPoolのメモリ制限解除 (Private Memory Limit = 0)
+- name: Disable private memory limit for WsusPool (prevent crashing)
+  community.windows.win_iis_webapppool:
+    name: WsusPool
+    attributes:
+      recycling.periodicRestart.privateMemory: 0
+  notify: Restart WSUS

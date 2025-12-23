@@ -16,3 +16,4 @@ venv/
 
 # ローカルテスト用
 test/
+inventory.ini

@@ -1,0 +1,17 @@
+---
+# 4. 定期的なお掃除タスクのスケジュール登録
+- name: Schedule WSUS Cleanup Task
+  community.windows.win_scheduled_task:
+    name: "WSUS Monthly Cleanup"
+    description: "Run WSUS Server Cleanup Wizard automatically to remove obsolete updates and computers."
+    actions:
+      - path: powershell.exe
+        arguments: "-Command Invoke-WsusServerCleanup -CleanupObsoleteComputers -CleanupObsoleteUpdates -CompressUpdates"
+    triggers:
+      - type: monthly
+        start_boundary: '2025-12-23T02:00:00'
+        days_of_month: 1
+        at: "03:00"
+    username: SYSTEM
+    state: present
+    enabled: true

@@ -1,0 +1,5 @@
+---
+- include_tasks: 01_install.yml
+- include_tasks: 02_post_install.yml
+- include_tasks: 03_configure_iis.yml
+- include_tasks: 04_schedule_cleanup.yml

@@ -1,0 +1,13 @@
+---
+# 1. WSUSの機能コンポーネントをインストール
+- name: Install WSUS and dependencies
+  ansible.windows.win_feature:
+    name: "{{ wsus_server_core_features }}"
+    state: present
+    include_management_tools: true
+  register: wsus_feature_install
+
+# 2. WSUSの再起動
+- name: Reboot if required by WSUS installation
+  ansible.windows.win_reboot:
+  when: wsus_feature_install.reboot_required

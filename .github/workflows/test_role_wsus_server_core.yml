@@ -1,0 +1,22 @@
+name: Test Role - WSUS Server Core
+
+on:
+  workflow_dispatch:
+  # mainブランチへのプッシュで自動実行したい場合はコメントアウトを外す
+  # push:
+  #   branches: [ "main" ]
+  #   paths:
+  #     - 'roles/wsus_server_core/**'
+
+jobs:
+  call-test-workflow:
+    uses: ./.github/workflows/_template_azure_test.yml
+    with:
+      tf_working_dir: './roles/wsus_server_core/tests/azure_infra'
+      ansible_playbook_path: '../../main.yml'
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      VM_ADMIN_PASSWORD: ${{ secrets.VM_ADMIN_PASSWORD }}
