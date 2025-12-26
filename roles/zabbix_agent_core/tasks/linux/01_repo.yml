@@ -1,9 +1,10 @@
 ---
-# Linux: Add Zabbix repository
-
+# リポジトリの設定 (RHEL系)
 - name: Install Zabbix Release RPM
   ansible.builtin.dnf:
     name: "{{ zabbix_agent_core_repo_rpm_url }}"
     state: present
     disable_gpg_check: true
   when: ansible_os_family == "RedHat"
+
+# TODO: 他のLinuxディストリビューションのサポートを追加

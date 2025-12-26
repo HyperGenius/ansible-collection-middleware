@@ -1,6 +1,5 @@
 ---
-# Linux: Configure Zabbix Agent 2
-
+# Zabbixエージェント2の設定 (RHEL系)
 - name: Create include directory for additional configurations
   ansible.builtin.file:
     path: "{{ zabbix_agent_core_include_dir }}"
@@ -9,6 +8,7 @@
     group: zabbix
     mode: '0750'
 
+# テンプレートからZabbixエージェント2の設定ファイルを配置
 - name: Deploy Zabbix Agent 2 configuration
   ansible.builtin.template:
     src: zabbix_agent2.conf.j2
@@ -19,6 +19,7 @@
     backup: true
   notify: Restart Zabbix Agent 2
 
+# Zabbixエージェント2サービスの起動と有効化
 - name: Ensure Zabbix Agent 2 service is started and enabled
   ansible.builtin.service:
     name: "{{ zabbix_agent_core_service_name_linux }}"

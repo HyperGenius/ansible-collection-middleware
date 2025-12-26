@@ -1,6 +1,5 @@
 ---
-# Windows: Configure firewall for Zabbix Agent 2
-
+# Zabbixエージェント2のファイアウォール設定 (Windows)
 - name: Allow Zabbix Agent port through Windows Firewall
   community.windows.win_firewall_rule:
     name: "Zabbix Agent 2"

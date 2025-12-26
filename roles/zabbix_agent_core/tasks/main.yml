@@ -1,7 +1,9 @@
 ---
-# Main task file for zabbix_agent_core role
-# OS-specific tasks are separated into subdirectories
+# 1. OS固有の変数をロード (RedHat.yml or Windows.yml)
+- name: Load OS-specific variables
+  ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
 
+# 2. OSごとのタスクへ分岐
 - name: Execute Linux tasks
   ansible.builtin.include_tasks:
     file: "linux/{{ item }}"

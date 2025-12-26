@@ -1,6 +1,5 @@
 ---
-# Linux: Configure firewall for Zabbix Agent 2
-
+# Zabbixエージェント2のファイアウォール設定 (RHEL系)
 - name: Allow Zabbix Agent port through firewalld
   ansible.posix.firewalld:
     port: "{{ zabbix_agent_core_listen_port }}/tcp"
@@ -8,6 +7,7 @@
     state: enabled
     immediate: true
   when:
+    - ansible_os_family == "RedHat"
     - zabbix_agent_core_configure_firewall | bool
     - ansible_facts.services['firewalld.service'] is defined
     - ansible_facts.services['firewalld.service'].state == 'running'

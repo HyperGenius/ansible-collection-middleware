@@ -1,11 +1,11 @@
 ---
-# Windows: Install Zabbix Agent 2
-
+# Zabbixエージェント2のインストーラをダウンロード (Windows)
 - name: Download Zabbix Agent 2 MSI installer
   ansible.windows.win_get_url:
     url: "{{ zabbix_agent_core_windows_installer_url }}"
     dest: "{{ zabbix_agent_core_windows_installer_path }}"
 
+# Zabbixエージェント2のインストール (Windows)
 - name: Install Zabbix Agent 2
   ansible.windows.win_package:
     path: "{{ zabbix_agent_core_windows_installer_path }}"
@@ -18,6 +18,7 @@
       - HOSTNAME="{{ zabbix_agent_core_hostname }}"
     state: present
 
+# インストーラファイルの削除 (Windows)
 - name: Remove installer file
   ansible.windows.win_file:
     path: "{{ zabbix_agent_core_windows_installer_path }}"

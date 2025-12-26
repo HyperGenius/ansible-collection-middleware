@@ -1,6 +1,5 @@
 ---
-# Windows: Configure Zabbix Agent 2
-
+# Zabbixエージェント2の設定ファイルを配置 (Windows)
 - name: Deploy Zabbix Agent 2 configuration
   ansible.windows.win_template:
     src: zabbix_agent2_win.conf.j2
@@ -8,12 +7,14 @@
     backup: true
   register: zabbix_agent_core_config_result
 
-- name: Restart Zabbix Agent 2 service (if config changed)  # noqa: no-handler
+# Zabbixエージェント2サービスの再起動 (設定ファイル変更時)
+- name: Restart Zabbix Agent 2 service (if config changed)
   ansible.windows.win_service:
     name: "{{ zabbix_agent_core_service_name_windows }}"
     state: restarted
   when: zabbix_agent_core_config_result.changed
 
+# Zabbixエージェント2サービスの起動と有効化 (Windows)
 - name: Ensure Zabbix Agent 2 service is started and enabled
   ansible.windows.win_service:
     name: "{{ zabbix_agent_core_service_name_windows }}"

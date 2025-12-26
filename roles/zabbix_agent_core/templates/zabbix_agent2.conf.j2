@@ -3,28 +3,28 @@
 # Managed by Ansible (Role: zabbix_agent_core)
 # ------------------------------------------------------------------------------
 
-# --- Network Settings ---
-# Passive checks - Server IP addresses that can connect to this agent
+# --- ネットワーク設定 ---
+# パッシブチェック用
 Server={{ zabbix_agent_core_server }}
 
-# Active checks - Server IP addresses to send active checks to
+# アクティブチェック用
 ServerActive={{ zabbix_agent_core_server_active }}
 
-# Listen port for passive checks
+# パッシブチェック用のリッスンポート
 ListenPort={{ zabbix_agent_core_listen_port }}
 
-# --- Host Identification ---
-# Hostname as it appears in Zabbix
+# --- ホスト識別 ---
+# Zabbix上でのホスト名
 Hostname={{ zabbix_agent_core_hostname }}
 
-# Host metadata for auto-registration
+# 自動登録用のホストメタデータ
 HostMetadata={{ zabbix_agent_core_host_metadata }}
 
-# --- Logging Settings ---
+# --- ログ設定 ---
 LogFile={{ zabbix_agent_core_log_file_linux }}
 LogFileSize=0
 
-# --- Extension Mechanism ---
-# Load additional configuration from conf.d directory
-# This allows projects to inject UserParameters, TLS settings, etc.
+# --- 拡張性 ---
+# 追加の設定ファイルを conf.d ディレクトリから読み込む
+# これにより、プロジェクトが UserParameters、TLS 設定などを注入できます
 Include={{ zabbix_agent_core_include_dir }}/*.conf
