@@ -1,0 +1,15 @@
+---
+# Windows: Configure Zabbix Agent 2
+
+- name: Deploy Zabbix Agent 2 configuration
+  ansible.windows.win_template:
+    src: zabbix_agent2_win.conf.j2
+    dest: "{{ zabbix_agent_core_config_file_windows }}"
+    backup: true
+  notify: Restart Zabbix Agent 2 (Windows)
+
+- name: Ensure Zabbix Agent 2 service is started and enabled
+  ansible.windows.win_service:
+    name: "{{ zabbix_agent_core_service_name_windows }}"
+    state: "{{ zabbix_agent_core_service_state }}"
+    start_mode: "{{ 'auto' if zabbix_agent_core_service_enabled else 'manual' }}"

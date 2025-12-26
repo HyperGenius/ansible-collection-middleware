@@ -1,0 +1,12 @@
+---
+# Handlers for zabbix_agent_core role
+
+- name: Restart Zabbix Agent 2
+  ansible.builtin.service:
+    name: "{{ zabbix_agent_core_service_name_linux }}"
+    state: restarted
+
+- name: Restart Zabbix Agent 2 (Windows)
+  ansible.builtin.command: |
+    powershell.exe -Command "Restart-Service -Name '{{ zabbix_agent_core_service_name_windows }}'"
+  changed_when: true

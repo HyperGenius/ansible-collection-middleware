@@ -1,0 +1,25 @@
+# ------------------------------------------------------------------------------
+# Zabbix Agent 2 Configuration File (Windows)
+# Managed by Ansible (Role: zabbix_agent_core)
+# ------------------------------------------------------------------------------
+
+# --- Network Settings ---
+# Passive checks - Server IP addresses that can connect to this agent
+Server={{ zabbix_agent_core_server }}
+
+# Active checks - Server IP addresses to send active checks to
+ServerActive={{ zabbix_agent_core_server_active }}
+
+# Listen port for passive checks
+ListenPort={{ zabbix_agent_core_listen_port }}
+
+# --- Host Identification ---
+# Hostname as it appears in Zabbix
+Hostname={{ zabbix_agent_core_hostname }}
+
+# Host metadata for auto-registration
+HostMetadata={{ zabbix_agent_core_host_metadata }}
+
+# --- Logging Settings ---
+LogFile={{ zabbix_agent_core_log_file_windows }}
+LogFileSize=0

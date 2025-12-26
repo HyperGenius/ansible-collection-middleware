@@ -1,0 +1,24 @@
+---
+# Windows: Install Zabbix Agent 2
+
+- name: Download Zabbix Agent 2 MSI installer
+  ansible.windows.win_get_url:
+    url: "{{ zabbix_agent_core_windows_installer_url }}"
+    dest: "{{ zabbix_agent_core_windows_installer_path }}"
+
+- name: Install Zabbix Agent 2
+  ansible.windows.win_package:
+    path: "{{ zabbix_agent_core_windows_installer_path }}"
+    product_id: "Zabbix Agent 2"
+    arguments:
+      - /qn
+      - /norestart
+      - SERVER="{{ zabbix_agent_core_server }}"
+      - SERVERACTIVE="{{ zabbix_agent_core_server_active }}"
+      - HOSTNAME="{{ zabbix_agent_core_hostname }}"
+    state: present
+
+- name: Remove installer file
+  ansible.windows.win_file:
+    path: "{{ zabbix_agent_core_windows_installer_path }}"
+    state: absent

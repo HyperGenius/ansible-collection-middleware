@@ -1,0 +1,28 @@
+---
+dependency:
+  name: galaxy
+
+driver:
+  name: docker
+
+platforms:
+  - name: instance
+    # Default is rockylinux9, use environment variable if provided
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-rockylinux9}-ansible:latest"
+    privileged: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    command: "/usr/sbin/init"
+    published_ports:
+      - "0.0.0.0:10050:10050/tcp"  # Zabbix Agent
+
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_FORCE_COLOR: "1"
+  ansible_args:
+    - --diff
+
+verifier:
+  name: testinfra

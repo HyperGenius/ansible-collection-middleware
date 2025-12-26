@@ -1,0 +1,9 @@
+---
+- name: Prepare
+  hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - name: No preparation needed
+      ansible.builtin.debug:
+        msg: "No preparation needed for Zabbix Agent 2 installation"

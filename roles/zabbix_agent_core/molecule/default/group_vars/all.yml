@@ -1,0 +1,4 @@
+---
+zabbix_agent_core_server: "127.0.0.1"
+zabbix_agent_core_server_active: "127.0.0.1"
+zabbix_agent_core_hostname: "test-agent"

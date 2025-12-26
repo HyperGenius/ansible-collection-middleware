@@ -1,0 +1,5 @@
+---
+# Internal variables (should not be overridden by users)
+zabbix_agent_core_config_file: "{{ zabbix_agent_core_config_file_windows if ansible_os_family == 'Windows' else zabbix_agent_core_config_file_linux }}"
+zabbix_agent_core_log_file: "{{ zabbix_agent_core_log_file_windows if ansible_os_family == 'Windows' else zabbix_agent_core_log_file_linux }}"
+zabbix_agent_core_service_name: "{{ zabbix_agent_core_service_name_windows if ansible_os_family == 'Windows' else zabbix_agent_core_service_name_linux }}"

@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  author: HyperGenius
+  description: Zabbix Agent 2 Core Role (Cross-platform)
+  company: HyperGenius
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: EL
+      versions: ['8', '9']
+    - name: Windows
+      versions: ['2019', '2022', '2025']
+  galaxy_tags:
+    - zabbix
+    - monitoring
+    - agent
+
+dependencies: []
