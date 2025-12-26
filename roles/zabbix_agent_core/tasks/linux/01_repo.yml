@@ -1,8 +1,20 @@
 ---
-# リポジトリの設定 (RHEL系)
-- name: Install Zabbix Release RPM
+# 1. まずファイルをダウンロードする（ここでリトライを頑張る）
+- name: Download Zabbix Release RPM
+  ansible.builtin.get_url:
+    url: "{{ zabbix_agent_core_repo_rpm_url }}"
+    dest: "/tmp/zabbix-release.rpm"
+    mode: '0644'
+  when: ansible_os_family == "RedHat"
+  register: download_result
+  until: download_result is success
+  retries: 5
+  delay: 10
+
+# 2. ローカルにあるファイルを使ってインストールする
+- name: Install Zabbix Release RPM from local file
   ansible.builtin.dnf:
-    name: "{{ zabbix_agent_core_repo_rpm_url }}"
+    name: "/tmp/zabbix-release.rpm"
     state: present
     disable_gpg_check: true
   when: ansible_os_family == "RedHat"

@@ -12,7 +12,7 @@
 - name: Deploy Zabbix Agent 2 configuration
   ansible.builtin.template:
     src: zabbix_agent2.conf.j2
-    dest: "{{ zabbix_agent_core_config_file_linux }}"
+    dest: "{{ zabbix_agent_core_config_file }}"
     owner: root
     group: root
     mode: '0644'
@@ -22,6 +22,6 @@
 # Zabbixエージェント2サービスの起動と有効化
 - name: Ensure Zabbix Agent 2 service is started and enabled
   ansible.builtin.service:
-    name: "{{ zabbix_agent_core_service_name_linux }}"
+    name: "{{ zabbix_agent_core_service_name }}"
     state: "{{ zabbix_agent_core_service_state }}"
     enabled: "{{ zabbix_agent_core_service_enabled }}"

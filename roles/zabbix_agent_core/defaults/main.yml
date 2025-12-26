@@ -2,7 +2,7 @@
 # defaults/main.yml
 
 # --- Basic Settings ---
-zabbix_agent_core_version: "7.0"
+zabbix_agent_core_version: "7.4"
 zabbix_agent_core_hostname: "{{ inventory_hostname }}"
 
 # --- Connection Settings ---
