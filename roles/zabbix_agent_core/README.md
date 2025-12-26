@@ -33,6 +33,11 @@ This role installs and configures Zabbix Agent 2 (Go-based agent) on both Linux 
 - `ansible.windows` collection
 - `community.windows` collection
 
+Install required collections:
+```bash
+ansible-galaxy collection install ansible.posix ansible.windows community.windows
+```
+
 ## Role Variables
 
 ### Core Configuration

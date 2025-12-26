@@ -6,7 +6,12 @@
     name: "{{ zabbix_agent_core_service_name_linux }}"
     state: restarted
 
-- name: Restart Zabbix Agent 2 (Windows)
-  ansible.builtin.command: |
-    powershell.exe -Command "Restart-Service -Name '{{ zabbix_agent_core_service_name_windows }}'"
-  changed_when: true
+# Windows handler - requires ansible.windows collection
+# Uncomment the following handler when using with Windows systems
+# Install collection first: ansible-galaxy collection install ansible.windows
+#
+# - name: Restart Zabbix Agent 2 (Windows)
+#   ansible.windows.win_service:
+#     name: "{{ zabbix_agent_core_service_name_windows }}"
+#     state: restarted
+#   when: ansible_os_family == "Windows"
