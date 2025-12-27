@@ -17,3 +17,6 @@ venv/
 # ローカルテスト用
 test/
 inventory.ini
+
+# 環境変数
+.env

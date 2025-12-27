@@ -19,3 +19,6 @@ yamllint>=1.32.0
 # Verification
 # テストコード(Python)を書くためのライブラリ
 pytest-testinfra>=9.0.0
+
+# 環境変数管理
+python-dotenv>=1.0.0
