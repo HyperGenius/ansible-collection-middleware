@@ -1,11 +1,11 @@
 """
-Zabbix Agent 2 service tests
+Zabbix Agent 2 サービスのテスト
 """
 
 
 def test_zabbix_agent_service_running(host, zabbix_vars):
-    """Zabbix Agent 2 service is running"""
-    service_name = zabbix_vars["zabbix_agent_core_service_name_linux"]
+    """Zabbix Agent 2 サービスが実行されている"""
+    service_name = zabbix_vars["zabbix_agent_core_service_name"]
     service = host.service(service_name)
 
     # Zabbix Agent 2 service is running (is_running)
@@ -16,7 +16,7 @@ def test_zabbix_agent_service_running(host, zabbix_vars):
 
 
 def test_zabbix_agent_port_listening(host, zabbix_vars):
-    """Zabbix Agent 2 is listening on specified port"""
+    """Zabbix Agent 2 が指定されたポートでリッスンしている"""
     listen_port = zabbix_vars["zabbix_agent_core_listen_port"]
 
     # Check that the agent is listening on the specified port

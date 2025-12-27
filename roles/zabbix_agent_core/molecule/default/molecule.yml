@@ -7,7 +7,7 @@ driver:
 
 platforms:
 # 1. テスト対象 (Agent)
-  - name: instance
+  - name: zabbix-agent-rhel
     # Default is rockylinux9, use environment variable if provided
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-rockylinux9}-ansible:latest"
     privileged: true
@@ -18,13 +18,13 @@ platforms:
     published_ports:
       - "0.0.0.0:10050:10050/tcp"  # Zabbix Agent
     networks:
-      - name: zabbix_test_net
+      - name: zabbix_test_network
 
 # 2. 検証用基盤 (Server)
-  # - name: zabbix-server-instance
+  # - name: zabbix-server
   #   image: "geerlingguy/docker-rockylinux9-ansible:latest"
   #   networks:
-  #     - name: zabbix_test_net
+  #     - name: zabbix_test_network
   #   published_ports:
   #     - "8080:80"     # Web UI
   #     - "10051:10051" # Zabbix Server

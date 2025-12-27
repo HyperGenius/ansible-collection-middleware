@@ -4,13 +4,13 @@ Zabbix Agent 2 installation tests
 
 
 def test_zabbix_agent_package_installed(host):
-    """Zabbix Agent 2 package is installed"""
+    """パッケージがインストールされている"""
     pkg = host.package("zabbix-agent2")
     assert pkg.is_installed
 
 
 def test_zabbix_agent_config_file_exists(host, zabbix_vars):
-    """Zabbix Agent 2 configuration file exists"""
+    """設定ファイルが存在する"""
     config_file = zabbix_vars["zabbix_agent_core_config_file"]
     f = host.file(config_file)
 
@@ -21,7 +21,7 @@ def test_zabbix_agent_config_file_exists(host, zabbix_vars):
 
 
 def test_zabbix_agent_include_dir_exists(host, zabbix_vars):
-    """Zabbix Agent 2 include directory exists"""
+    """設定ファイルディレクトリが存在する"""
     include_dir = zabbix_vars["zabbix_agent_core_include_dir"]
     d = host.file(include_dir)
 
