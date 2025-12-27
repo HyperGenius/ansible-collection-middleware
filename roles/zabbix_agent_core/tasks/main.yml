@@ -1,0 +1,24 @@
+---
+# 1. OS固有の変数をロード (RedHat.yml or Windows.yml)
+- name: Load OS-specific variables
+  ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
+
+# 2. OSごとのタスクへ分岐
+- name: Execute Linux tasks
+  ansible.builtin.include_tasks:
+    file: "linux/{{ item }}"
+  loop:
+    - 01_repo.yml
+    - 02_install.yml
+    - 03_config.yml
+    - 04_firewall.yml
+  when: ansible_os_family != "Windows"
+
+- name: Execute Windows tasks
+  ansible.builtin.include_tasks:
+    file: "windows/{{ item }}"
+  loop:
+    - 01_install.yml
+    - 02_config.yml
+    - 03_firewall.yml
+  when: ansible_os_family == "Windows"

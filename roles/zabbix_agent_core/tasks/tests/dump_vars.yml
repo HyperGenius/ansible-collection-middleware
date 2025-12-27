@@ -1,0 +1,25 @@
+---
+# Dump role variables to JSON for Testinfra tests
+- name: Create directory for test data
+  ansible.builtin.file:
+    path: /tmp/test_data
+    state: directory
+    mode: '0755'
+
+- name: Dump role variables to JSON
+  ansible.builtin.copy:
+    content: "{{ role_vars | to_nice_json }}"
+    dest: /tmp/test_data/zabbix_agent_vars.json
+    mode: '0644'
+  vars:
+    role_vars:
+      zabbix_agent_core_version: "{{ zabbix_agent_core_version }}"
+      zabbix_agent_core_server: "{{ zabbix_agent_core_server }}"
+      zabbix_agent_core_server_active: "{{ zabbix_agent_core_server_active }}"
+      zabbix_agent_core_hostname: "{{ zabbix_agent_core_hostname }}"
+      zabbix_agent_core_host_metadata: "{{ zabbix_agent_core_host_metadata }}"
+      zabbix_agent_core_listen_port: "{{ zabbix_agent_core_listen_port }}"
+      zabbix_agent_core_config_file: "{{ zabbix_agent_core_config_file }}"
+      zabbix_agent_core_log_file: "{{ zabbix_agent_core_log_file }}"
+      zabbix_agent_core_service_name: "{{ zabbix_agent_core_service_name }}"
+      zabbix_agent_core_include_dir: "{{ zabbix_agent_core_include_dir }}"

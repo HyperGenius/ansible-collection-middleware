@@ -1,0 +1,24 @@
+---
+# defaults/main.yml
+
+# --- Basic Settings ---
+zabbix_agent_core_version: "7.4"
+zabbix_agent_core_hostname: "{{ inventory_hostname }}"
+
+# --- Connection Settings ---
+zabbix_agent_core_server: "127.0.0.1"        # Passive
+zabbix_agent_core_server_active: "127.0.0.1" # Active
+zabbix_agent_core_listen_port: 10050
+
+# --- Auto Registration ---
+# OSファミリーに応じたメタデータをセット
+zabbix_agent_core_host_metadata: "{{ 'Windows' if ansible_os_family == 'Windows' else 'Linux' }}"
+
+# --- Feature Flags ---
+zabbix_agent_core_configure_firewall: true
+zabbix_agent_core_service_state: started
+zabbix_agent_core_service_enabled: true
+
+# --- Windows Installer Version (User might want to pin this) ---
+# Windowsはインストーラーのフルバージョン指定が必要なため、ここだけ残す
+zabbix_agent_core_windows_version: "7.0.6"

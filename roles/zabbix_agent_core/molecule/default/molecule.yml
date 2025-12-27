@@ -1,0 +1,40 @@
+---
+dependency:
+  name: galaxy
+
+driver:
+  name: docker
+
+platforms:
+# 1. テスト対象 (Agent)
+  - name: zabbix-agent-rhel
+    # Default is rockylinux9, use environment variable if provided
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-rockylinux9}-ansible:latest"
+    privileged: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    command: "/usr/sbin/init"
+    published_ports:
+      - "0.0.0.0:10050:10050/tcp"  # Zabbix Agent
+    networks:
+      - name: zabbix_test_network
+
+# 2. 検証用基盤 (Server)
+  # - name: zabbix-server
+  #   image: "geerlingguy/docker-rockylinux9-ansible:latest"
+  #   networks:
+  #     - name: zabbix_test_network
+  #   published_ports:
+  #     - "8080:80"     # Web UI
+  #     - "10051:10051" # Zabbix Server
+
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_FORCE_COLOR: "1"
+  ansible_args:
+    - --diff
+
+verifier:
+  name: testinfra

@@ -1,0 +1,29 @@
+---
+- name: Prepare Server
+  hosts: zabbix-server
+  become: true
+  gather_facts: true
+  tasks:
+    # TODO: Zabbix Serverの準備をタグで分ける
+    - name: No preparation needed
+      ansible.builtin.debug:
+        msg: "No preparation needed for Zabbix Agent 2 installation"
+
+    # zabbix_serverへ自動登録ルールの投入
+    - ansible.builtin.include_role:
+        name: middleware.middleware.zabbix_config
+      vars:
+        zabbix_config_autoreg_name: "Test Auto Registration"
+        zabbix_config_autoreg_metadata: "Linux"
+        zabbix_config_autoreg_group: "Linux servers"
+        zabbix_config_autoreg_template: "Linux by Zabbix agent"
+
+- name: Prepare Agent
+  hosts: zabbix-agent-rhel
+  become: true
+  gather_facts: true
+  tasks:
+    - name: No preparation needed
+      ansible.builtin.debug:
+        msg: "No preparation needed for Zabbix Agent 2 installation"
+

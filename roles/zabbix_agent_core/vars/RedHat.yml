@@ -1,0 +1,13 @@
+---
+# vars/RedHat.yml
+
+# Service & Paths
+zabbix_agent_core_service_name: "zabbix-agent2"
+zabbix_agent_core_config_file: "/etc/zabbix/zabbix_agent2.conf"
+zabbix_agent_core_log_file: "/var/log/zabbix/zabbix_agent2.log"
+zabbix_agent_core_include_dir: "/etc/zabbix/zabbix_agent2.d"
+
+# Repository Settings
+_repo_base_url: "https://repo.zabbix.com/zabbix/{{ zabbix_agent_core_version }}/release/rhel/{{ ansible_distribution_major_version }}/noarch"
+
+zabbix_agent_core_repo_rpm_url: "{{ _repo_base_url }}/zabbix-release-latest-{{ zabbix_agent_core_version }}.el{{ ansible_distribution_major_version }}.noarch.rpm"

@@ -1,0 +1,25 @@
+# ------------------------------------------------------------------------------
+# Zabbix Agent 2 Configuration File (Windows)
+# Managed by Ansible (Role: zabbix_agent_core)
+# ------------------------------------------------------------------------------
+
+# --- ネットワーク設定 ---
+# パッシブチェック用
+Server={{ zabbix_agent_core_server }}
+
+# アクティブチェック用
+ServerActive={{ zabbix_agent_core_server_active }}
+
+# パッシブチェック用のリッスンポート
+ListenPort={{ zabbix_agent_core_listen_port }}
+
+# --- ホスト識別 ---
+# Zabbix上でのホスト名
+Hostname={{ zabbix_agent_core_hostname }}
+
+# 自動登録用のホストメタデータ
+HostMetadata={{ zabbix_agent_core_host_metadata }}
+
+# --- ログ設定 ---
+LogFile={{ zabbix_agent_core_log_file }}
+LogFileSize=0
