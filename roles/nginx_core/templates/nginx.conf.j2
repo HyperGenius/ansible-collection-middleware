@@ -41,8 +41,8 @@ http {
     {{ key }} {{ value }};
     {% endfor %}
     {% endif %}
-    
+
     # --- 3.4 Load config files ---
     include {{ nginx_conf_d_dir }}/*.conf;
-    
+
  }

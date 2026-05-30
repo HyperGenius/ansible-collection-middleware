@@ -22,3 +22,5 @@ pytest-testinfra>=9.0.0
 
 # 環境変数管理
 python-dotenv>=1.0.0
+
+pre_commit==4.6.0

@@ -26,4 +26,3 @@
     - name: No preparation needed
       ansible.builtin.debug:
         msg: "No preparation needed for Zabbix Agent 2 installation"
-

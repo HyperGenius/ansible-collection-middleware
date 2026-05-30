@@ -1,5 +1,16 @@
 # .ansible-lint
+profile: basic
 
+# 除外するルール
+# skip_list:
+
+# 警告扱いにするルール
+warn_list:
+  - yaml[line-length]
+  - name[template]
+  - experimental
+
+# 除外するパスやファイル
 exclude_paths:
   - ".ansible/tmp"
   - ".ansible/roles"

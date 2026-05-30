@@ -1,0 +1,14 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "ansible-lint",
+            "type": "shell",
+            "command": "source roles/venv/bin/activate && ansible-lint -p playbooks/*.yml",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        }
+    ]
+}

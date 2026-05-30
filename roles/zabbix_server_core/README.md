@@ -71,7 +71,7 @@ zabbix_server_core_web_port: 80               # Zabbix Web (Nginx) ポート
       vars:
         postgresql_core_version: "16"
     - role: middleware.middleware.nginx_core
-    
+
     # 2. Zabbix用のDBとユーザーを作成
     - name: Create Zabbix database and user
       block:
@@ -79,13 +79,13 @@ zabbix_server_core_web_port: 80               # Zabbix Web (Nginx) ポート
             name: zabbix
             encoding: UTF-8
           become_user: postgres
-        
+
         - community.postgresql.postgresql_user:
             db: zabbix
             name: zabbix
             password: your_secure_password
           become_user: postgres
-    
+
     # 3. Zabbix Serverをセットアップ（パスワードは変数で渡す）
     - role: middleware.middleware.zabbix_server_core
       vars:
@@ -104,17 +104,17 @@ zabbix_server_core_web_port: 80               # Zabbix Web (Nginx) ポート
         name: middleware.middleware.postgresql_core
     - ansible.builtin.include_role:
         name: middleware.middleware.nginx_core
-    
+
     # 2. Zabbix用のDBとユーザーを作成
     # ... (省略)
-    
+
     # 3. Zabbix Serverをセットアップ（パスワードはまだ設定しない）
     - ansible.builtin.include_role:
         name: middleware.middleware.zabbix_server_core
       vars:
         zabbix_server_core_major_version: "7.4"
         # パスワードは渡さない - 次のタスクでファイルとして配置
-    
+
     # 4. DBパスワード設定ファイルを作成（プロジェクト管理）
     - name: Create DBPassword configuration
       ansible.builtin.copy:
@@ -125,7 +125,7 @@ zabbix_server_core_web_port: 80               # Zabbix Web (Nginx) ポート
         group: zabbix
         mode: '0640'
       notify: Restart Zabbix Server
-  
+
   handlers:
     - name: Restart Zabbix Server
       ansible.builtin.service:

@@ -10,7 +10,7 @@
         name: "middleware.middleware.nginx_core"
       vars:
         nginx_enable_default_server: false
-  
+
     # 2. PostgreSQLのインストール
     - name: Install PostgreSQL using postgresql_core role
       ansible.builtin.include_role:

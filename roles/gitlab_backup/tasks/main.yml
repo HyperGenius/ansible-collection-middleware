@@ -1,0 +1,35 @@
+---
+# gitlab-backup-create を実行
+- name: Run gitlab-backup create
+  ansible.builtin.command: gitlab-backup create BACKUP={{ ansible_date_time.date }}
+  become: true
+  register: backup_result
+  ignore_errors: false
+
+# gitlab.rb と gitlab-secrets.json をアーカイブ
+- name: Archive gitlab.rb and gitlab-secrets.json
+  ansible.builtin.archive:
+    path:
+      - /etc/gitlab/gitlab.rb
+      - /etc/gitlab/gitlab-secrets.json
+    dest: "{{ gitlab_backup_path }}/gitlab-config-{{ ansible_date_time.date }}.tar.gz"
+    mode: '0600'
+  become: true
+
+# バックアップの結果をログに記録
+- name: Log backup result
+  ansible.builtin.include_tasks: transfer.yml
+  when: backup_result.rc == 0
+
+# バックアップステータスをJSONで記録
+- name: Record backup status in JSON
+  ansible.builtin.copy:
+    content: |
+      {
+        "timestamp": "{{ ansible_date_time.iso8601 }}",
+        "status": "{{ 'success' if backup_result.rc == 0 else 'failure' }}",
+        "rc": {{ backup_result.rc }}
+      }
+    dest: "{{ backup_status_file }}"
+    mode: '0644'
+  become: true

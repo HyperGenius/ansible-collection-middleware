@@ -1,0 +1,53 @@
+---
+# 1. GitLabサービスを停止 (puma/sidekiq)
+- name: Stop GitLab services (puma/sidekiq)
+  ansible.builtin.command: "gitlab-ctl stop {{ item }}"
+  loop:
+    - puma
+    - sidekiq
+  become: true
+
+# バックアップファイルをGitLabサーバーへ転送
+- name: Transfer backup file from backup server to GitLab server
+  ansible.posix.synchronize:
+    src: "{{ backup_server_path }}/{{ backup_file }}"
+    dest: "{{ gitlab_backup_path }}/{{ backup_file }}"
+    mode: pull
+  delegate_to: "{{ groups['gitlab'][0] }}"
+
+# バックアップファイルのパーミッション設定
+- name: Set permissions for backup file
+  ansible.builtin.file:
+    path: "{{ gitlab_backup_path }}/{{ backup_file }}"
+    owner: git
+    group: git
+    mode: '0600'
+  become: true
+
+# リストア実行 (BACKUP=タイムスタンプ部分を指定)
+- name: Restore GitLab backup (specify BACKUP=timestamp part)
+  ansible.builtin.command: >
+    gitlab-backup restore
+    BACKUP={{ backup_file | regex_replace('_gitlab_backup.tar', '') }}
+    force=yes
+  become: true
+  register: restore_result
+
+# リストアの結果をログに記録
+- name: gitlab-ctl reconfigure & restart
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - gitlab-ctl reconfigure
+    - gitlab-ctl restart
+  become: true
+
+# GitLabのヘルスチェック
+- name: Healthcheck
+  ansible.builtin.command: gitlab-rake gitlab:check SANITIZE=true
+  become: true
+  register: health_result
+
+# リストア結果を表示
+- name: Display restore result
+  ansible.builtin.debug:
+    msg: "{{ health_result.stdout_lines }}"

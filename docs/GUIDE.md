@@ -62,7 +62,7 @@ Core Role を先に実行し、その後にプロジェクト固有の設定 Rol
 - name: Setup Application Server
   hosts: app_servers
   become: true
-  
+
   roles:
     # 1. 基盤の構築 (Core Role)
     - role: middleware.middleware.tomcat_core

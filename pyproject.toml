@@ -1,0 +1,9 @@
+[project]
+name = "ansible-collection-middleware"
+version = "0.1.0"
+description = "Ansible Roles for middleware management"
+
+[tool.mypy]
+# 型チェックの設定
+python_version = "3.13"
+ignore_missing_imports = true     # 外部ライブラリの型定義がない場合の警告を抑制
