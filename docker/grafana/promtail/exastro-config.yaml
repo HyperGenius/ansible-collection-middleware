@@ -1,0 +1,69 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: ${LOKI_URL}/loki/api/v1/push
+
+scrape_configs:
+  # Collect all Docker container logs via Docker API discovery
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+    relabel_configs:
+      # Container name (strip leading slash)
+      - source_labels: [__meta_docker_container_name]
+        regex: '/(.*)'
+        target_label: container
+      # Docker Compose service name
+      - source_labels: [__meta_docker_container_label_com_docker_compose_service]
+        target_label: compose_service
+      # Docker Compose project name
+      - source_labels: [__meta_docker_container_label_com_docker_compose_project]
+        target_label: compose_project
+      # stdout / stderr stream
+      - source_labels: [__meta_docker_container_log_stream]
+        target_label: stream
+    pipeline_stages:
+      # Docker json-file log format: {"log":"...","stream":"...","time":"..."}
+      - json:
+          expressions:
+            output: log
+            stream: stream
+            timestamp: time
+      # Extract timestamp from the Docker log entry so Promtail uses the original time
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+      # Drop entries older than 7 days to match Loki's reject_old_samples_max_age
+      - drop:
+          older_than: 168h
+          drop_counter_reason: entry_too_old
+      - labels:
+          stream:
+      - output:
+          source: output
+      # Parse Apache combined log format for ITA API / Platform containers
+      # Log format: %h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-Agent}i"
+      - match:
+          selector: '{compose_service=~"ita-api-organization|ita-api-admin|ita-api-oase-receiver|ita-api-ansible-execution-receiver|platform-auth|platform-api"}'
+          stages:
+            - regex:
+                expression: '^(?P<client_ip>[\d.:\[\]]+) \S+ (?P<api_user>\S+) \[[^\]]+\] "(?P<http_method>\S+) (?P<request_path>\S+)[^"]*" (?P<http_status>\d{3})'
+            - labels:
+                http_method:
+                http_status:
+
+  # Collect Exastro audit log files written to /var/log/exastro
+  - job_name: exastro-audit
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: exastro-audit
+          compose_project: exastro
+          __path__: /var/log/exastro/*.log
