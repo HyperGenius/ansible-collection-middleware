@@ -1,3 +1,9 @@
 {
-    "python.defaultInterpreterPath": "${workspaceFolder}/roles/venv/bin/python"
+    "python.defaultInterpreterPath": "${workspaceFolder}/roles/venv/bin/python",
+    "cSpell.dictionaries": [
+        "python",
+        "ansible",
+        "typescript",
+        "softwareTerms"
+    ]
 }

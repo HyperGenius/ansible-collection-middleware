@@ -2,13 +2,35 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "ansible-lint",
+            "label": "ansible-lint all playbooks",
             "type": "shell",
             "command": "source roles/venv/bin/activate && ansible-lint -p playbooks/*.yml",
+            "options": {
+                "shell": {
+                    "executable": "/bin/bash",
+                    "args": ["-c"]
+                }
+            },
             "group": {
                 "kind": "test",
                 "isDefault": true
             }
+        },
+        {
+            "label": "ansible-lint current playbook",
+            "type": "shell",
+            "command": "source roles/venv/bin/activate && ansible-lint ${relativeFile}",
+            "options": {
+                "shell": {
+                    "executable": "/bin/bash",
+                    "args": ["-c"]
+                }
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "problemMatcher": []
         }
     ]
 }
