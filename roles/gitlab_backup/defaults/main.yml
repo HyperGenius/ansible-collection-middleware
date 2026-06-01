@@ -1,0 +1,34 @@
+---
+# --- Backup Core ---
+gitlab_backup_path: /var/opt/gitlab/backups
+gitlab_backup_status_file: /var/log/gitlab/backup_status.json
+gitlab_backup_log_file: /var/log/gitlab/backup.log
+
+# --- Transfer Method: rsync | s3 ---
+gitlab_backup_transfer_method: rsync
+
+# --- rsync Settings ---
+gitlab_backup_rsync_host: ""
+gitlab_backup_rsync_user: git
+gitlab_backup_rsync_dest_path: ""
+# GitLabホスト上のSSH秘密鍵パス。未指定の場合はrsyncのデフォルト鍵を使用。
+gitlab_backup_rsync_ssh_private_key_path: ""
+# 転送成功後にGitLabホスト上のバックアップを削除するか。デフォルトは false (安全側)。
+gitlab_backup_rsync_remove_source: false
+
+# --- S3 Settings ---
+gitlab_backup_s3_bucket: ""
+gitlab_backup_s3_prefix: "gitlab-backups/"
+gitlab_backup_s3_region: ""
+# MinIO等のオンプレミスS3互換ストレージの場合に指定。AWS S3の場合は空文字。
+gitlab_backup_s3_endpoint_url: ""
+# AWS CLIプロファイル。未指定でデフォルトプロファイルを使用。
+gitlab_backup_s3_profile: ""
+
+# --- Retention ---
+# バックアップサーバー/S3に保持する世代数。0で無制限。
+gitlab_backup_generations: 7
+
+# --- Inventory Group Names ---
+gitlab_backup_gitlab_group: gitlab
+gitlab_backup_backup_group: backup

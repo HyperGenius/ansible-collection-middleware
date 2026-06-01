@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  author: HyperGenius
+  description: Backup on-premises GitLab using rsync or S3-compatible storage
+  license: MIT
+  min_ansible_version: "2.14"
+  platforms:
+    - name: EL
+      versions:
+        - "8"
+        - "9"
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+  galaxy_tags:
+    - gitlab
+    - backup
+
+dependencies: []

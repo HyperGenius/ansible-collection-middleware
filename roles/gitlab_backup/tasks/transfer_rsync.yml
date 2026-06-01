@@ -1,0 +1,26 @@
+---
+- name: Transfer backup files via rsync
+  ansible.builtin.command: >-
+    rsync -av
+    {{ '--rsh="ssh -i ' + gitlab_backup_rsync_ssh_private_key_path + '"'
+       if gitlab_backup_rsync_ssh_private_key_path else '' }}
+    {{ '--remove-source-files' if gitlab_backup_rsync_remove_source else '' }}
+    --include='*_gitlab_backup.tar'
+    --include='gitlab-config-*.tar.gz'
+    --exclude='*'
+    {{ gitlab_backup_path }}/
+    {{ gitlab_backup_rsync_user }}@{{ gitlab_backup_rsync_host }}:{{ gitlab_backup_rsync_dest_path }}/
+  become: true
+  register: _gitlab_backup_rsync_result
+
+- name: Delete old backup generations on backup server
+  ansible.builtin.shell: |
+    set -euo pipefail
+    for pattern in '*_gitlab_backup.tar' 'gitlab-config-*.tar.gz'; do
+      ls -t {{ gitlab_backup_rsync_dest_path }}/${pattern} 2>/dev/null \
+        | tail -n +{{ gitlab_backup_generations + 1 }} \
+        | xargs -r rm -f
+    done
+  delegate_to: "{{ groups[gitlab_backup_backup_group][0] }}"
+  become: true
+  when: gitlab_backup_generations | int > 0

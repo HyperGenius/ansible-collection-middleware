@@ -1,0 +1,47 @@
+---
+- name: Build S3 CLI options
+  ansible.builtin.set_fact:
+    _gitlab_backup_s3_opts: >-
+      {{ ('--endpoint-url ' + gitlab_backup_s3_endpoint_url) if gitlab_backup_s3_endpoint_url else '' }}
+      {{ ('--region ' + gitlab_backup_s3_region) if gitlab_backup_s3_region else '' }}
+      {{ ('--profile ' + gitlab_backup_s3_profile) if gitlab_backup_s3_profile else '' }}
+
+- name: Find data backup files
+  ansible.builtin.find:
+    paths: "{{ gitlab_backup_path }}"
+    patterns: "*_gitlab_backup.tar"
+  become: true
+  register: _gitlab_backup_data_files
+
+- name: Upload data backup files to S3
+  ansible.builtin.command: >-
+    aws s3 cp
+    {{ item.path }}
+    s3://{{ gitlab_backup_s3_bucket }}/{{ gitlab_backup_s3_prefix }}{{ item.path | basename }}
+    {{ _gitlab_backup_s3_opts }}
+  loop: "{{ _gitlab_backup_data_files.files }}"
+  become: true
+
+- name: Upload config backup to S3
+  ansible.builtin.command: >-
+    aws s3 cp
+    {{ gitlab_backup_path }}/gitlab-config-{{ ansible_date_time.date }}.tar.gz
+    s3://{{ gitlab_backup_s3_bucket }}/{{ gitlab_backup_s3_prefix }}gitlab-config-{{ ansible_date_time.date }}.tar.gz
+    {{ _gitlab_backup_s3_opts }}
+  become: true
+
+- name: Delete old data backup generations from S3
+  ansible.builtin.shell: |
+    set -euo pipefail
+    aws s3 ls s3://{{ gitlab_backup_s3_bucket }}/{{ gitlab_backup_s3_prefix }} \
+      {{ _gitlab_backup_s3_opts }} \
+    | grep "_gitlab_backup\.tar$" \
+    | sort -k1,2 -r \
+    | tail -n +{{ gitlab_backup_generations + 1 }} \
+    | awk '{print $4}' \
+    | while read -r key; do
+        aws s3 rm "s3://{{ gitlab_backup_s3_bucket }}/{{ gitlab_backup_s3_prefix }}${key}" \
+          {{ _gitlab_backup_s3_opts }}
+      done
+  become: true
+  when: gitlab_backup_generations | int > 0
